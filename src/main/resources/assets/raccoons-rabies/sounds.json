@@ -1,0 +1,22 @@
+{
+  "entity_raccoon_ambient": {
+    "subtitle": "subtitles.raccoons-rabies.entity_raccoon_ambient",
+    "sounds": [
+      "raccoons-rabies:raccoon_ambient_0",
+      "raccoons-rabies:raccoon_ambient_1",
+      "raccoons-rabies:raccoon_ambient_2"
+    ]
+  },
+  "entity_raccoon_hurt": {
+    "subtitle": "subtitles.raccoons-rabies.entity_raccoon_hurt",
+    "sounds": [
+      "raccoons-rabies:raccoon-hurt"
+    ]
+  },
+  "entity_raccoon_death": {
+    "subtitle": "subtitles.raccoons-rabies.entity_raccoon_death",
+    "sounds": [
+      "raccoons-rabies:raccoon_death"
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+{
+	"required": true,
+	"package": "net.cordicus.raccoons.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"mixins": [
+		"LivingEntityMixin"
+	],
+	"client": [
+		"ArmorFeatureRendererMixin",
+		"HeadFeatureRendererMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

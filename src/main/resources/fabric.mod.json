@@ -1,0 +1,44 @@
+{
+	"schemaVersion": 1,
+	"id": "raccoons-rabies",
+	"version": "${version}",
+	"name": "Raccoons & Rabies",
+	"description": "Adding Raccoons and a way to weaponise them!",
+	"authors": [
+		"Cordicus (Owner)",
+		"TheTrueYaK (Contributor)",
+		"n1tr0n__ (Contributor)"
+
+
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/raccoons-rabies/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"net.cordicus.raccoons.RaccoonsRabies"
+		],
+		"client": [
+			"net.cordicus.raccoons.RaccoonsRabiesClient"
+		],
+		"fabric-datagen": [
+			"net.cordicus.raccoons.RaccoonsRabiesDataGenerator"
+		]
+	},
+	"mixins": [
+		"raccoons-rabies.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.4",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}

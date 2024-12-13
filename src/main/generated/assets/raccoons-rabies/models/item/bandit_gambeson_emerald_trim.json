@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "raccoons-rabies:item/bandit_gambeson",
+    "layer1": "minecraft:trims/items/chestplate_trim_emerald"
+  }
+}

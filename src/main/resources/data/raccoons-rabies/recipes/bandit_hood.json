@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "minecraft:chain"
+  },
+  "base": {
+    "item": "minecraft:diamond_helmet"
+  },
+  "result": {
+    "item": "raccoons-rabies:bandit_hood"
+  },
+  "template": {
+    "item": "raccoons-rabies:bandit_upgrade"
+  }
+}

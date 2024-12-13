@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "minecraft:chain"
+  },
+  "base": {
+    "item": "minecraft:diamond_leggings"
+  },
+  "result": {
+    "item": "raccoons-rabies:bandit_greaves"
+  },
+  "template": {
+    "item": "raccoons-rabies:bandit_upgrade"
+  }
+}

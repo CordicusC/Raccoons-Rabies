@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer_1": "raccoons-rabies:textures/models/armor/bandit_layer_1"
+  }
+}
