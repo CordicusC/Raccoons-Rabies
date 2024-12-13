@@ -27,6 +27,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
@@ -40,6 +41,7 @@ import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
@@ -50,10 +52,26 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
         super((EntityType<? extends TameableEntity>) entityType, world);
     }
 
+    private static final Map<String, Integer> NAME_TO_VARIANT = Map.of(
+            "Cordicus", 4,
+            "Nitron", 5,
+            "Bandit", 6
+    );
+
+
     @Override
     public void writeCustomDataToNbt(NbtCompound nbt) {
         super.writeCustomDataToNbt(nbt);
         nbt.putInt("Type", this.getRaccoonType());
+    }
+
+    @Override
+    public void setCustomName(@Nullable Text name) {
+        super.setCustomName(name);
+        if (name != null) {
+            String nameString = name.getString();
+            this.setRaccoonType(NAME_TO_VARIANT.getOrDefault(nameString, 0));
+        }
     }
 
     @Override
@@ -90,6 +108,7 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.raccoon.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.raccoon.walk");
     protected static final RawAnimation SIT = RawAnimation.begin().thenLoop("animation.raccoon.sitting");
+    protected static final RawAnimation SCRATCHING = RawAnimation.begin().thenLoop("animation.raccoon.sitting");
     protected <E extends RaccoonEntity>PlayState raccoonAnimController(final software.bernie.geckolib.core.animation.AnimationState<E> event) {
         RaccoonEntity raccoon = (RaccoonEntity) event.getAnimatable();
 

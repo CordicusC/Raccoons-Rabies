@@ -12,6 +12,8 @@ import net.minecraft.util.math.MathHelper;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.model.GeoModel;
 
+import java.util.Objects;
+
 // Made with Blockbench 4.10.4
 // Exported for Minecraft version 1.17+ for Yarn
 // Paste this class into your mod and generate all required imports
@@ -24,6 +26,15 @@ public class RaccoonModel extends GeoModel<RaccoonEntity> {
 	private static final Identifier RACCOON_S = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/raccoon_sleeping.png");
 	private static final Identifier AMETHYST_S = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/amethyst_raccoon_sleeping.png");
 	private static final Identifier ALBINO_S = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/albino_raccoon_sleeping.png");
+
+	private static final Identifier CORD = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/cord_raccoon.png");
+	private static final Identifier NITRON = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/nitron_raccoon.png");
+	private static final Identifier CORD_S = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/cord_raccoon_sleeping.png");
+	private static final Identifier NITRON_S = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/nitron_raccoon_sleeping.png");
+	private static final Identifier BANDIT = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/bandit_raccoon.png");
+	private static final Identifier BANDIT_S = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/bandit_raccoon_sleeping.png");
+
+
 	@Override
 	public Identifier getModelResource(RaccoonEntity animatable) {
 		return new Identifier(RaccoonsRabies.MOD_ID, "geo/raccoon.geo.json");
@@ -40,22 +51,43 @@ public class RaccoonModel extends GeoModel<RaccoonEntity> {
 	}
 
 	public static Identifier getRaccoonTexture(RaccoonEntity raccoonType) {
-		switch (raccoonType.getRaccoonType()) {
-			case 1:
+		return switch (raccoonType.getRaccoonType()) {
+			case 1 -> {
 				if (raccoonType.isInSittingPose()) {
-					return AMETHYST_S;
+					yield AMETHYST_S;
 				}
-				return AMETHYST;
-			case 2:
+				yield AMETHYST;
+			}
+			case 2 -> {
 				if (raccoonType.isInSittingPose()) {
-					return ALBINO_S;
+					yield ALBINO_S;
 				}
-				return ALBINO;
-			default:
+				yield ALBINO;
+			}
+			case 4 -> {
 				if (raccoonType.isInSittingPose()) {
-					return RACCOON_S;
+					yield CORD_S;
 				}
-				return RACCOON;
-		}
+				yield CORD;
+			}
+			case 5 -> {
+				if (raccoonType.isInSittingPose()) {
+					yield NITRON_S;
+				}
+				yield NITRON;
+			}
+			case 6 -> {
+				if (raccoonType.isInSittingPose()) {
+					yield BANDIT_S;
+				}
+				yield BANDIT;
+			}
+			default -> {
+				if (raccoonType.isInSittingPose()) {
+					yield RACCOON_S;
+				}
+				yield RACCOON;
+			}
+		};
 	}
 }
