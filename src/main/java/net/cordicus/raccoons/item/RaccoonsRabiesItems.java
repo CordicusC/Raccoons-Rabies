@@ -3,6 +3,7 @@ package net.cordicus.raccoons.item;
 import net.cordicus.raccoons.RaccoonsRabies;
 import net.cordicus.raccoons.entity.RaccoonsRabiesEntities;
 import net.cordicus.raccoons.item.custom.BanditSmithingTemplateItem;
+import net.cordicus.raccoons.item.custom.RaccoonHandheldItem;
 import net.cordicus.raccoons.item.custom.RaccoonsRabiesArmorItem;
 import net.cordicus.raccoons.item.custom.RaccoonsRabiesArmorMaterials;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
@@ -14,6 +15,12 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 
 public class RaccoonsRabiesItems {
+
+    public static Item RACCOON_FUR = register("raccoon_fur", new Item(new FabricItemSettings()));
+    public static Item ALBINO_RACCOON_FUR = register("albino_raccoon_fur", new Item(new FabricItemSettings()));
+
+    public static Item RACCOON = register("raccoon", new RaccoonHandheldItem(new FabricItemSettings().maxCount(1)));
+
 
     private static Item registerItem(String name, Item item) {
         return Registry.register(Registries.ITEM, new Identifier(RaccoonsRabies.MOD_ID, name), item);

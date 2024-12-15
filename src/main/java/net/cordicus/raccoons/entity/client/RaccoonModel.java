@@ -14,9 +14,6 @@ import software.bernie.geckolib.model.GeoModel;
 
 import java.util.Objects;
 
-// Made with Blockbench 4.10.4
-// Exported for Minecraft version 1.17+ for Yarn
-// Paste this class into your mod and generate all required imports
 public class RaccoonModel extends GeoModel<RaccoonEntity> {
 	//AWAKE
 	private static final Identifier RACCOON = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/raccoon.png");

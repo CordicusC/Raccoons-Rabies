@@ -2,6 +2,7 @@ package net.cordicus.raccoons.entity.custom;
 
 import net.cordicus.raccoons.RaccoonsRabies;
 import net.cordicus.raccoons.entity.RaccoonsRabiesEntities;
+import net.cordicus.raccoons.item.RaccoonsRabiesItems;
 import net.cordicus.raccoons.sounds.RaccoonsRabiesSounds;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.entity.*;
@@ -21,6 +22,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -47,6 +49,7 @@ import java.util.UUID;
 
 public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntity {
     private static final TrackedData<Integer> TYPE = DataTracker.registerData(RaccoonEntity.class, TrackedDataHandlerRegistry.INTEGER);
+    private static final TrackedData<Boolean> IDLED = DataTracker.registerData(RaccoonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 
     public RaccoonEntity(EntityType<? extends AnimalEntity> entityType, World world) {
         super((EntityType<? extends TameableEntity>) entityType, world);
@@ -77,7 +80,8 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
     @Override
     public void readCustomDataFromNbt(NbtCompound nbt) {
         super.readCustomDataFromNbt(nbt);
-        this.setRaccoonType(nbt.getInt("Type"));
+        int type = nbt.getInt("Type");
+        this.setRaccoonType(type);
     }
 
     @Override
@@ -89,9 +93,16 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
     public int getRaccoonType() {
         return this.dataTracker.get(TYPE);
     }
+    public boolean getRaccoonIdle() {
+        return this.dataTracker.get(IDLED);
+    }
 
     public void setRaccoonType(int type) {
         this.dataTracker.set(TYPE, type);
+    }
+
+    public void setRaccoonIdle(boolean bool) {
+        this.dataTracker.set(IDLED, bool);
     }
 
     private void setupAnimationStates() {
@@ -104,11 +115,10 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
 
     }
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+        private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.raccoon.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.raccoon.walk");
     protected static final RawAnimation SIT = RawAnimation.begin().thenLoop("animation.raccoon.sitting");
-    protected static final RawAnimation SCRATCHING = RawAnimation.begin().thenLoop("animation.raccoon.sitting");
     protected <E extends RaccoonEntity>PlayState raccoonAnimController(final software.bernie.geckolib.core.animation.AnimationState<E> event) {
         RaccoonEntity raccoon = (RaccoonEntity) event.getAnimatable();
 
@@ -148,7 +158,6 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
         }
     }
 
-
     @Override
     protected void initGoals() {
         this.goalSelector.add(0, new SwimGoal(this));
@@ -171,7 +180,19 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
 
     @Override
     public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt) {
-        this.setRaccoonType(this.random.nextInt(3));
+        Random random = new Random();
+        int number = random.nextInt(100) + 1;
+
+        if (number == 1) {
+            // AMETHYST
+            this.setRaccoonType(1);
+        } else if (number > 1 && number <= 19) {
+            // ALBINO
+            this.setRaccoonType(2);
+        } else if (number > 19 && number <= 100) {
+            // NORMAL
+            this.setRaccoonType(3);
+        }
         return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
     }
 
@@ -227,6 +248,20 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         ItemStack itemStack = player.getStackInHand(hand);
         Item item = itemStack.getItem();
+
+        if(!this.getWorld().isClient){
+            if(itemStack.isOf(Items.AIR) && player.isSneaking() && this.isTamed() && this.isOwner(player)){
+                this.discard();
+                player.setStackInHand(hand, new ItemStack(RaccoonsRabiesItems.RACCOON));
+                ItemStack handStack = player.getStackInHand(hand);
+                NbtCompound nbt = handStack.getOrCreateNbt();
+                nbt.putInt("Type", this.getRaccoonType());
+                nbt.putUuid("Owner", this.getOwnerUuid());
+                nbt.putBoolean("Baby", this.isBaby());
+                return ActionResult.SUCCESS;
+            }
+        }
+
         if (this.getWorld().isClient) {
             boolean bl = this.isOwner(player) || this.isTamed() || itemStack.getItem().isFood() && !this.isTamed() && !this.hasAngerTime();
             return bl ? ActionResult.CONSUME : ActionResult.PASS;
@@ -384,18 +419,40 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() {
+        if(this.getRaccoonType() == 1){
+            return SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME;
+        }
         return RaccoonsRabiesSounds.ENTITY_RACCOON_AMBIENT;
     }
 
     @Nullable
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
+        if(this.getRaccoonType() == 1){
+            return SoundEvents.BLOCK_AMETHYST_BLOCK_STEP;
+        }
         return RaccoonsRabiesSounds.ENTITY_RACCOON_HURT;
+    }
+
+    @Override
+    protected void dropLoot(DamageSource damageSource, boolean causedByPlayer) {
+        super.dropLoot(damageSource, causedByPlayer);
+
+        if (this.getRaccoonType() == 1) {
+            this.dropStack(new ItemStack(Items.AMETHYST_SHARD, this.random.nextInt(3)));
+        } else if (this.getRaccoonType() == 2) {
+            this.dropStack(new ItemStack(RaccoonsRabiesItems.ALBINO_RACCOON_FUR, this.random.nextInt(3)));
+        } else if (this.getRaccoonType() == 3) {
+            this.dropStack(new ItemStack(RaccoonsRabiesItems.RACCOON_FUR, this.random.nextInt(3)));
+        }
     }
 
     @Nullable
     @Override
     protected SoundEvent getDeathSound() {
+        if(this.getRaccoonType() == 1){
+            return SoundEvents.BLOCK_AMETHYST_BLOCK_BREAK;
+        }
         return RaccoonsRabiesSounds.ENTITY_RACCOON_DEATH;
     }
 
