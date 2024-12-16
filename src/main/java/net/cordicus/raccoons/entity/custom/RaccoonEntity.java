@@ -31,6 +31,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.*;
@@ -73,7 +74,9 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
         super.setCustomName(name);
         if (name != null) {
             String nameString = name.getString();
-            this.setRaccoonType(NAME_TO_VARIANT.getOrDefault(nameString, 0));
+            if (NAME_TO_VARIANT.containsValue(nameString)) {
+                this.setRaccoonType(NAME_TO_VARIANT.getOrDefault(nameString, 0));
+            }
         }
     }
 
@@ -258,6 +261,9 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
                 nbt.putInt("Type", this.getRaccoonType());
                 nbt.putUuid("Owner", this.getOwnerUuid());
                 nbt.putBoolean("Baby", this.isBaby());
+                if (this.getCustomName() != null) { // sets custom name to item name too
+                    handStack.setCustomName(this.getCustomName().copy().formatted(Formatting.ITALIC));
+                }
                 return ActionResult.SUCCESS;
             }
         }

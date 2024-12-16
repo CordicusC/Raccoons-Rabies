@@ -39,6 +39,9 @@ public class RaccoonHandheldItem extends Item {
             entity.setOwnerUuid(nbt.getUuid("Owner"));
             entity.setRaccoonType(nbt.getInt("Type"));
             entity.setBaby(nbt.getBoolean("Baby"));
+            if (!context.getStack().getName().equals(this.getDefaultStack().getName())) { // custom item name :p
+                entity.setCustomName(context.getStack().getName().copy().formatted(Formatting.RESET));
+            }
             context.getStack().decrement(1);
             context.getWorld().spawnEntity(entity);
         }
@@ -50,33 +53,26 @@ public class RaccoonHandheldItem extends Item {
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         int type = stack.getOrCreateNbt().getInt("Type");
 
-        if(stack.getOrCreateNbt().getBoolean("Baby")){
-            if(type == 1){
-                tooltip.add(Text.literal("Amethyst (Baby)").formatted(Formatting.LIGHT_PURPLE));
-            } else if(type == 2){
-                tooltip.add(Text.literal("Albino (Baby)").formatted(Formatting.GRAY));
-            }else if(type == 4){
-                tooltip.add(Text.literal("Cordicus (Baby)").formatted(Formatting.RED));
-            }else if(type == 5){
-                tooltip.add(Text.literal("Nitron (Baby)").formatted(Formatting.RED));
-            }else if(type == 6){
-                tooltip.add(Text.literal("Bandit (Baby)").formatted(Formatting.RED));
-            } else {
-                tooltip.add(Text.literal("Normal (Baby)").formatted(Formatting.DARK_GRAY));
+        if(stack.getOrCreateNbt().getBoolean("Baby")) {
+            switch (type) {
+                case 1: tooltip.add(Text.literal("Amethyst (Baby)").formatted(Formatting.LIGHT_PURPLE)); break;
+                case 2: tooltip.add(Text.literal("Albino (Baby)").formatted(Formatting.GRAY)); break;
+                case 4: tooltip.add(Text.literal("Cordicus (Baby)").formatted(Formatting.RED)); break;
+                case 5: tooltip.add(Text.literal("Nitron (Baby)").formatted(Formatting.RED)); break;
+                case 6: tooltip.add(Text.literal("Bandit (Baby)").formatted(Formatting.RED)); break;
+                case 7: tooltip.add(Text.literal("Yak (Baby)").formatted(Formatting.RED)); break;
+                default: tooltip.add(Text.literal("Normal (Baby)").formatted(Formatting.DARK_GRAY)); break;
             }
-        } else {
-            if(type == 1){
-                tooltip.add(Text.literal("Amethyst").formatted(Formatting.LIGHT_PURPLE));
-            } else if(type == 2){
-                tooltip.add(Text.literal("Albino").formatted(Formatting.GRAY));
-            }else if(type == 4){
-                tooltip.add(Text.literal("Cordicus").formatted(Formatting.RED));
-            }else if(type == 5){
-                tooltip.add(Text.literal("Nitron").formatted(Formatting.RED));
-            }else if(type == 6) {
-                tooltip.add(Text.literal("Bandit").formatted(Formatting.RED));
-            }else {
-                tooltip.add(Text.literal("Normal").formatted(Formatting.DARK_GRAY));
+        }
+        else {
+            switch (type) {
+                case 1: tooltip.add(Text.literal("Amethyst").formatted(Formatting.LIGHT_PURPLE)); break;
+                case 2: tooltip.add(Text.literal("Albino").formatted(Formatting.GRAY)); break;
+                case 4: tooltip.add(Text.literal("Cordicus").formatted(Formatting.RED)); break;
+                case 5: tooltip.add(Text.literal("Nitron").formatted(Formatting.RED)); break;
+                case 6: tooltip.add(Text.literal("Bandit").formatted(Formatting.RED)); break;
+                case 7: tooltip.add(Text.literal("Yak").formatted(Formatting.RED)); break;
+                default: tooltip.add(Text.literal("Normal").formatted(Formatting.DARK_GRAY)); break;
             }
         }
 
