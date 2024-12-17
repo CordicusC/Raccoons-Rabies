@@ -19,7 +19,7 @@ public class RaccoonsRabiesItems {
     public static Item RACCOON_FUR = register("raccoon_fur", new Item(new FabricItemSettings()));
     public static Item ALBINO_RACCOON_FUR = register("albino_raccoon_fur", new Item(new FabricItemSettings()));
 
-    public static Item RACCOON = register("raccoon", new RaccoonHandheldItem(new FabricItemSettings().maxCount(1)));
+    public static Item RACCOON = register("raccoon", new RaccoonHandheldItem(ArmorMaterials.LEATHER, ArmorItem.Type.HELMET, new FabricItemSettings()));
 
 
     private static Item registerItem(String name, Item item) {

@@ -9,6 +9,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.world.World;
@@ -25,27 +26,45 @@ public abstract class ItemEntityMixin extends Entity {
     public ItemEntityMixin(EntityType<?> type, World world) {
         super(type, world);
     }
+
     @Shadow
     public abstract ItemStack getStack();
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void raccoonsRabies$spawnRaccoonOnDrop(CallbackInfo ci) {
-        if (this.getStack().isOf(RaccoonsRabiesItems.RACCOON)) {
+        ItemStack stack = this.getStack();
+        if (stack != null && stack.isOf(RaccoonsRabiesItems.RACCOON)) {
             if (!this.getWorld().isClient()) {
                 RaccoonEntity raccoon = RaccoonsRabiesEntities.RACCOON.create(this.getWorld());
                 if (raccoon != null) {
-                    NbtCompound nbt = this.getStack().getNbt();
-                    raccoon.setTamed(true);
-                    raccoon.setOwnerUuid(nbt.getUuid("Owner"));
-                    raccoon.setRaccoonType(nbt.getInt("Type"));
-                    raccoon.setBaby(nbt.getBoolean("Baby"));
-                    if (!this.getStack().getName().equals(RaccoonsRabiesItems.RACCOON.getDefaultStack().getName())) { // custom item name AGAIN! :3
-                        raccoon.setCustomName(this.getStack().getName().copy().formatted(Formatting.RESET));
+                    NbtCompound nbt = stack.getNbt();
+                    if (nbt != null) {
+                        raccoon.setTamed(true);
+                        if (nbt.contains("Owner")) {
+                            raccoon.setOwnerUuid(nbt.getUuid("Owner"));
+                            stack.decrement(1);
+                            ci.cancel();
+                            return;
+                        }
+                        if (nbt.contains("Type", NbtElement.NUMBER_TYPE)) {
+                            raccoon.setRaccoonType(nbt.getInt("Type"));
+                            stack.decrement(1);
+                            ci.cancel();
+                            return;
+                        }
+                        if (nbt.contains("Baby", NbtElement.BYTE_TYPE)) {
+                            raccoon.setBaby(nbt.getBoolean("Baby"));
+                            stack.decrement(1);
+                            ci.cancel();
+                            return;
+                        }
+                        if (!stack.getName().equals(RaccoonsRabiesItems.RACCOON.getDefaultStack().getName())) {
+                            raccoon.setCustomName(stack.getName().copy().formatted(Formatting.RESET));
+                        }
                     }
                     raccoon.setPos(this.getX(), this.getY(), this.getZ());
-                    raccoon.updatePosition(this.getX(), this.getY(), this.getZ());
                     this.getWorld().spawnEntity(raccoon);
-                    this.getStack().decrement(1);
+                    stack.decrement(1);
                     ci.cancel();
                 }
             }
@@ -54,9 +73,11 @@ public abstract class ItemEntityMixin extends Entity {
 
     @Inject(method = "cannotPickup", at = @At("HEAD"), cancellable = true)
     private void raccoonsRabies$noRaccoonItemPickup(CallbackInfoReturnable<Boolean> cir) {
-        if (this.getStack().isOf(RaccoonsRabiesItems.RACCOON)) {
+        ItemStack stack = this.getStack();
+        if (stack != null && stack.isOf(RaccoonsRabiesItems.RACCOON)) {
             cir.setReturnValue(true);
         }
     }
+
 
 }
