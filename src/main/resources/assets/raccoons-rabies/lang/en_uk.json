@@ -1,0 +1,36 @@
+{
+  "entity.raccoons-rabies.raccoon": "Raccoon",
+
+  "item.raccoons-rabies.raccoon_spawn_egg": "Raccoon Spawn Egg",
+  "item.raccoons-rabies.raccoon_fur": "Raccoon Fur",
+  "item.raccoons-rabies.albino_raccoon_fur": "Albino Raccoon Fur",
+  "item.raccoons-rabies.raccoon": "Raccoon",
+  "item.raccoons-rabies.bandit_hood": "Bandit Hood",
+  "item.raccoons-rabies.bandit_gambeson": "Bandit Gambeson",
+  "item.raccoons-rabies.bandit_greaves": "Bandit Greaves",
+  "item.raccoons-rabies.bandit_boots": "Bandit Boots",
+  "item.raccoons-rabies.bandit_armor.tooltip": "Set Bonus: Makes the wearer immune to rabies",
+
+  "subtitles.raccoons-rabies.entity_raccoon_ambient": "Raccoon chitters",
+  "subtitles.raccoons-rabies.entity_raccoon_hurt": "Raccoon hurt",
+  "subtitles.raccoons-rabies.entity_raccoon_death": "Raccoon dies",
+
+  "effect.raccoons-rabies.rabies": "Rabies",
+
+  "itemgroup.raccoon": "Raccoons & Rabies",
+
+  "death.attack.rabies": "%1$s succumbed to rabies",
+  "death.attack.rabies.player": "%1$s succumbed to rabies whilst fighting %2$s",
+
+  "tooltip.bandit_hood.hidden": "§7Mask visibility: §8Hidden",
+  "tooltip.bandit_hood.visible": "§7Mask visibility: §7Visible",
+
+  "tooltip.bandit_hood.hint": "§8Press [§7Right Click§8] to toggle visibility",
+
+  "upgrade.raccoons-rabies.bandit_upgrade": "Bandit Armour",
+  "item.raccoons-rabies.smithing_template.bandit_upgrade.apply_to": "Diamond Equipment",
+  "item.raccoons-rabies.smithing_template.bandit_upgrade.ingredients": "Chain",
+
+  "item.raccoons-rabies.smithing_template.base_slot_description": "Add Diamond armour",
+  "item.raccoons-rabies.smithing_template.additions_slot_description": "Add Chain"
+}

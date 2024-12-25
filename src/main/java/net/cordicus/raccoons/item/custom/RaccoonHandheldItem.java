@@ -1,6 +1,5 @@
 package net.cordicus.raccoons.item.custom;
 
-import net.cordicus.raccoons.RaccoonsRabies;
 import net.cordicus.raccoons.entity.RaccoonsRabiesEntities;
 import net.cordicus.raccoons.entity.custom.RaccoonEntity;
 import net.cordicus.raccoons.item.client.RaccoonHandheldRenderer;
@@ -8,8 +7,6 @@ import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.sound.SoundEvent;
@@ -17,8 +14,6 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -29,14 +24,13 @@ import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class RaccoonHandheldItem extends ArmorItem implements GeoItem {
+public class RaccoonHandheldItem extends Item implements GeoItem {
 
-    public RaccoonHandheldItem(ArmorMaterial material, Type type, Settings settings) {
-        super(material, type, settings);
+    public RaccoonHandheldItem(Settings settings) {
+        super(settings);
     }
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
@@ -47,14 +41,22 @@ public class RaccoonHandheldItem extends ArmorItem implements GeoItem {
         Vec3d hitResult = context.getHitPos();
 
         Vec3d spawnLocation = new Vec3d(hitResult.x, hitResult.y, hitResult.z);
-        NbtCompound nbt = context.getStack().getOrCreateNbt();
         if (!context.getWorld().isClient) {
             RaccoonEntity entity = new RaccoonEntity(RaccoonsRabiesEntities.RACCOON, context.getWorld());
             entity.updatePosition(spawnLocation.x, spawnLocation.y, spawnLocation.z);
-            entity.setTamed(true);
-            entity.setOwnerUuid(nbt.getUuid("Owner"));
-            entity.setRaccoonType(nbt.getInt("Type"));
-            entity.setBaby(nbt.getBoolean("Baby"));
+            if (context.getStack().hasNbt()) {
+                NbtCompound nbt = context.getStack().getOrCreateNbt();
+                if (nbt != null) {
+                    entity.setTamed(true);
+                    entity.setOwnerUuid(nbt.getUuid("Owner"));
+                    entity.setRaccoonType(nbt.getInt("Type"));
+                    entity.setBaby(nbt.getBoolean("Baby"));
+                }
+            }
+            else { // in the case of no nbt, falls back on this as the default
+                entity.setTamed(false);
+                entity.setRaccoonType(0);
+            }
             if (!context.getStack().getName().equals(this.getDefaultStack().getName())) { // custom item name :p
                 entity.setCustomName(context.getStack().getName().copy().formatted(Formatting.RESET));
             }
@@ -115,11 +117,6 @@ public class RaccoonHandheldItem extends ArmorItem implements GeoItem {
     @Override
     public Supplier<Object> getRenderProvider() {
         return this.renderProvider;
-    }
-
-    @Override
-    public SoundEvent getEquipSound() {
-        return SoundEvents.BLOCK_COMPARATOR_CLICK;
     }
 
     @Override

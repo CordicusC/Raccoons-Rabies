@@ -57,9 +57,9 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
     }
 
     private static final Map<String, Integer> NAME_TO_VARIANT = Map.of(
-            "Cordicus", 4,
-            "Nitron", 5,
-            "Bandit", 6
+            "cordicus", 4,
+            "nitron", 5,
+            "bandit", 6
     );
 
 
@@ -74,8 +74,8 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
         super.setCustomName(name);
         if (name != null) {
             String nameString = name.getString();
-            if (NAME_TO_VARIANT.containsValue(nameString)) {
-                this.setRaccoonType(NAME_TO_VARIANT.getOrDefault(nameString, 0));
+            if (NAME_TO_VARIANT.containsKey((nameString.toLowerCase()))) {  // named variants are no longer case sensitive
+                this.setRaccoonType(NAME_TO_VARIANT.getOrDefault(nameString.toLowerCase(), 0));
             }
         }
     }

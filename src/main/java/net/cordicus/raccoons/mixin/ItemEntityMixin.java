@@ -37,31 +37,23 @@ public abstract class ItemEntityMixin extends Entity {
             if (!this.getWorld().isClient()) {
                 RaccoonEntity raccoon = RaccoonsRabiesEntities.RACCOON.create(this.getWorld());
                 if (raccoon != null) {
-                    NbtCompound nbt = stack.getNbt();
-                    if (nbt != null) {
-                        raccoon.setTamed(true);
-                        if (nbt.contains("Owner")) {
+                    if (stack.hasNbt()) {
+                        NbtCompound nbt = stack.getNbt();
+                        if (nbt != null) { // if  nbt is not null, then it can be assumed that everything else is there
+                            raccoon.setTamed(true);
                             raccoon.setOwnerUuid(nbt.getUuid("Owner"));
-                            stack.decrement(1);
-                            ci.cancel();
-                            return;
-                        }
-                        if (nbt.contains("Type", NbtElement.NUMBER_TYPE)) {
                             raccoon.setRaccoonType(nbt.getInt("Type"));
-                            stack.decrement(1);
-                            ci.cancel();
-                            return;
-                        }
-                        if (nbt.contains("Baby", NbtElement.BYTE_TYPE)) {
                             raccoon.setBaby(nbt.getBoolean("Baby"));
-                            stack.decrement(1);
-                            ci.cancel();
-                            return;
-                        }
-                        if (!stack.getName().equals(RaccoonsRabiesItems.RACCOON.getDefaultStack().getName())) {
-                            raccoon.setCustomName(stack.getName().copy().formatted(Formatting.RESET));
                         }
                     }
+                    else { // in case there is NO nbt, falls back to not tamed and default type (should only happen from /give). it also dupes with /give. I don't care how or why and it's not exactly intended so it's whatever
+                        raccoon.setTamed(false);
+                        raccoon.setRaccoonType(0);
+                    }
+                    if (!stack.getName().equals(RaccoonsRabiesItems.RACCOON.getDefaultStack().getName())) {
+                        raccoon.setCustomName(stack.getName().copy().formatted(Formatting.RESET));
+                    }
+                    raccoon.updatePosition(this.getX(), this.getY(), this.getZ());
                     raccoon.setPos(this.getX(), this.getY(), this.getZ());
                     this.getWorld().spawnEntity(raccoon);
                     stack.decrement(1);
@@ -73,8 +65,7 @@ public abstract class ItemEntityMixin extends Entity {
 
     @Inject(method = "cannotPickup", at = @At("HEAD"), cancellable = true)
     private void raccoonsRabies$noRaccoonItemPickup(CallbackInfoReturnable<Boolean> cir) {
-        ItemStack stack = this.getStack();
-        if (stack != null && stack.isOf(RaccoonsRabiesItems.RACCOON)) {
+        if (this.getStack().isOf(RaccoonsRabiesItems.RACCOON)) { // item should never be able to be picked up, as it will always spawn a raccoon when dropped, nbt or not
             cir.setReturnValue(true);
         }
     }

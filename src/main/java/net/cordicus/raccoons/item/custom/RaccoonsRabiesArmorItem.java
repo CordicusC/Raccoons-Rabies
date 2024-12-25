@@ -11,6 +11,7 @@ import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ClickType;
 import net.minecraft.util.Formatting;
@@ -58,6 +59,9 @@ public class RaccoonsRabiesArmorItem extends ArmorItem {
         if (stack.getItem().asItem() == RaccoonsRabiesItems.BANDIT_HELMET) {
             if (otherStack.isEmpty() && clickType == ClickType.RIGHT) {
                 setHidden(stack, !isHidden(stack));
+                if (player.getWorld().isClient) {
+                    player.playSound(SoundEvents.BLOCK_LEVER_CLICK, 0.4f, 1.2f);
+                }
                 slot.markDirty();
                 return true;
             }
