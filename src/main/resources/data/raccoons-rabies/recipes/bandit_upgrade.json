@@ -13,7 +13,7 @@
       "item": "raccoons-rabies:bandit_upgrade"
     },
     "C": {
-      "item": "minecraft:chain"
+      "tag": "raccoons-rabies:raccoon_furs"
     }
   },
   "result": {

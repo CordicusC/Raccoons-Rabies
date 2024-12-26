@@ -29,8 +29,8 @@
 
   "upgrade.raccoons-rabies.bandit_upgrade": "Bandit Armour",
   "item.raccoons-rabies.smithing_template.bandit_upgrade.apply_to": "Diamond Equipment",
-  "item.raccoons-rabies.smithing_template.bandit_upgrade.ingredients": "Chain",
+  "item.raccoons-rabies.smithing_template.bandit_upgrade.ingredients": "Raccoon Furs",
 
   "item.raccoons-rabies.smithing_template.base_slot_description": "Add Diamond armour",
-  "item.raccoons-rabies.smithing_template.additions_slot_description": "Add Chain"
+  "item.raccoons-rabies.smithing_template.additions_slot_description": "Add a Raccoon Fur"
 }
