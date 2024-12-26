@@ -1,7 +1,10 @@
 package net.cordicus.raccoons.item.custom;
 
+import dev.emi.trinkets.api.TrinketComponent;
+import dev.emi.trinkets.api.TrinketsApi;
 import net.cordicus.raccoons.entity.RaccoonsRabiesEntities;
 import net.cordicus.raccoons.entity.custom.RaccoonEntity;
+import net.cordicus.raccoons.item.RaccoonsRabiesItems;
 import net.cordicus.raccoons.item.client.RaccoonHandheldRenderer;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
@@ -24,6 +27,7 @@ import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -128,4 +132,18 @@ public class RaccoonHandheldItem extends Item implements GeoItem {
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.cache;
     }
+
+    public static boolean hasRaccoonEquipped(LivingEntity livingEntity) {
+        Optional<TrinketComponent> trinketComponent = TrinketsApi.getTrinketComponent(livingEntity);
+        return trinketComponent.map(component -> component.isEquipped(RaccoonsRabiesItems.RACCOON)).orElse(false);
+    }
+
+    public static ItemStack getRaccoonOnHead(LivingEntity livingEntity) {
+        Optional<TrinketComponent> trinketComponent = TrinketsApi.getTrinketComponent(livingEntity);
+        if (trinketComponent.isPresent()) {
+            return trinketComponent.get().getEquipped(RaccoonsRabiesItems.RACCOON).get(0).getRight();
+        }
+        return ItemStack.EMPTY;
+    }
+
 }
