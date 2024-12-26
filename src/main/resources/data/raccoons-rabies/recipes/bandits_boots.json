@@ -1,7 +1,7 @@
 {
   "type": "minecraft:smithing_transform",
   "addition": {
-    "item": "minecraft:chain"
+    "tag": "raccoons-rabies:raccoon_furs"
   },
   "base": {
     "item": "minecraft:diamond_boots"
