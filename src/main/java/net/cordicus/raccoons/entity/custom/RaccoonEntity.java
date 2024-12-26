@@ -59,7 +59,8 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
     private static final Map<String, Integer> NAME_TO_VARIANT = Map.of(
             "cordicus", 4,
             "nitron", 5,
-            "bandit", 6
+            "bandit", 6,
+            "yak", 7
     );
 
 

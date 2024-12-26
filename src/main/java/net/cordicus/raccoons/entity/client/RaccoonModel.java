@@ -30,6 +30,8 @@ public class RaccoonModel extends GeoModel<RaccoonEntity> {
 	private static final Identifier NITRON_S = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/nitron_raccoon_sleeping.png");
 	private static final Identifier BANDIT = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/bandit_raccoon.png");
 	private static final Identifier BANDIT_S = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/bandit_raccoon_sleeping.png");
+	private static final Identifier YAK = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/yak_raccoon.png");
+	private static final Identifier YAK_S = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/yak_raccoon_sleeping.png");
 
 
 	@Override
@@ -78,6 +80,12 @@ public class RaccoonModel extends GeoModel<RaccoonEntity> {
 					yield BANDIT_S;
 				}
 				yield BANDIT;
+			}
+			case 7 -> {
+				if (raccoonType.isInSittingPose()) {
+					yield YAK_S;
+				}
+				yield YAK;
 			}
 			default -> {
 				if (raccoonType.isInSittingPose()) {
