@@ -43,8 +43,20 @@ public class RaccoonsRabiesItems {
 
     public static void registerModItems() {
         RaccoonsRabies.LOGGER.info("Registering Mod Items for" + RaccoonsRabies.MOD_ID);
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.SPAWN_EGGS);
-
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT).register(entries -> {
+            entries.addBefore(Items.NETHERITE_HELMET, BANDIT_HELMET);
+            entries.addBefore(Items.NETHERITE_HELMET, BANDIT_CHESTPLATE);
+            entries.addBefore(Items.NETHERITE_HELMET, BANDIT_LEGGINGS);
+            entries.addBefore(Items.NETHERITE_HELMET, BANDIT_BOOTS);
+        });
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(entries -> {
+            entries.addAfter(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE, BANDIT_UPGRADE);
+            entries.addAfter(Items.STRING, ALBINO_RACCOON_FUR);
+            entries.addAfter(Items.STRING, RACCOON_FUR);
+        });
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.SPAWN_EGGS).register(entries -> {
+            entries.addAfter(Items.FOX_SPAWN_EGG, RACCOON_SPAWN_EGG);
+        });
     }
 
     //Bandit Armour Set
