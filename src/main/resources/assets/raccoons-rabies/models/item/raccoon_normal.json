@@ -1,0 +1,6 @@
+{
+	"parent": "raccoons-rabies:item/raccoon_parent",
+	"textures": {
+		"0": "raccoons-rabies:item/raccoon"
+	}
+}

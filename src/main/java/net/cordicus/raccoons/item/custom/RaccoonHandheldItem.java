@@ -14,6 +14,7 @@ import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
@@ -40,6 +41,17 @@ public class RaccoonHandheldItem extends Item implements GeoItem {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
 
+    public static int getType(ItemStack stack) {
+        if (stack.getNbt() == null) {
+            setType(stack,0);
+        }
+        return stack.getNbt().getInt("Type");
+    }
+
+    public static void setType(ItemStack stack, int type) {
+        stack.getOrCreateNbt().putInt("Type", type);
+    }
+
     @Override
     public ActionResult useOnBlock(ItemUsageContext context) {
         Vec3d hitResult = context.getHitPos();
@@ -51,8 +63,14 @@ public class RaccoonHandheldItem extends Item implements GeoItem {
             if (context.getStack().hasNbt()) {
                 NbtCompound nbt = context.getStack().getOrCreateNbt();
                 if (nbt != null) {
-                    entity.setTamed(true);
-                    entity.setOwnerUuid(nbt.getUuid("Owner"));
+                    if (nbt.contains("Owner")) {
+                        entity.setTamed(true);
+                        entity.setOwnerUuid(nbt.getUuid("Owner"));
+                        entity.setSitting(context.getPlayer() != null && context.getPlayer().isSneaking()); // if player is sneaking when placing sets the raccoon to be sitting
+                    }
+                    else {
+                        entity.setTamed(false);
+                    }
                     entity.setRaccoonType(nbt.getInt("Type"));
                     entity.setBaby(nbt.getBoolean("Baby"));
                 }
@@ -77,23 +95,23 @@ public class RaccoonHandheldItem extends Item implements GeoItem {
 
         if(stack.getOrCreateNbt().getBoolean("Baby")) {
             switch (type) {
-                case 1: tooltip.add(Text.literal("Amethyst (Baby)").formatted(Formatting.LIGHT_PURPLE)); break;
-                case 2: tooltip.add(Text.literal("Albino (Baby)").formatted(Formatting.GRAY)); break;
-                case 4: tooltip.add(Text.literal("Cordicus (Baby)").formatted(Formatting.RED)); break;
-                case 5: tooltip.add(Text.literal("Nitron (Baby)").formatted(Formatting.RED)); break;
-                case 6: tooltip.add(Text.literal("Bandit (Baby)").formatted(Formatting.RED)); break;
-                case 7: tooltip.add(Text.literal("Yak (Baby)").formatted(Formatting.RED)); break;
+                case 1: tooltip.add(Text.literal("Amethyst (Baby)").setStyle(Style.EMPTY.withColor(0xC890F0))); break;
+                case 2: tooltip.add(Text.literal("Albino (Baby)").setStyle(Style.EMPTY.withColor(0x796A63))); break;
+                case 4: tooltip.add(Text.literal("Cordicus (Baby)").setStyle(Style.EMPTY.withColor(0xfb6cc4))); break;
+                case 5: tooltip.add(Text.literal("Nitron (Baby)").setStyle(Style.EMPTY.withColor(0xff004f))); break;
+                case 6: tooltip.add(Text.literal("Bandit (Baby)").setStyle(Style.EMPTY.withColor(0x8C6E56))); break;
+                case 7: tooltip.add(Text.literal("Yak (Baby)").setStyle(Style.EMPTY.withColor(0x3FC2EA))); break;
                 default: tooltip.add(Text.literal("Normal (Baby)").formatted(Formatting.DARK_GRAY)); break;
             }
         }
         else {
             switch (type) {
-                case 1: tooltip.add(Text.literal("Amethyst").formatted(Formatting.LIGHT_PURPLE)); break;
-                case 2: tooltip.add(Text.literal("Albino").formatted(Formatting.GRAY)); break;
-                case 4: tooltip.add(Text.literal("Cordicus").formatted(Formatting.RED)); break;
-                case 5: tooltip.add(Text.literal("Nitron").formatted(Formatting.RED)); break;
-                case 6: tooltip.add(Text.literal("Bandit").formatted(Formatting.RED)); break;
-                case 7: tooltip.add(Text.literal("Yak").formatted(Formatting.RED)); break;
+                case 1: tooltip.add(Text.literal("Amethyst").setStyle(Style.EMPTY.withColor(0xC890F0))); break;
+                case 2: tooltip.add(Text.literal("Albino").setStyle(Style.EMPTY.withColor(0x796A63))); break;
+                case 4: tooltip.add(Text.literal("Cordicus").setStyle(Style.EMPTY.withColor(0xfb6cc4))); break;
+                case 5: tooltip.add(Text.literal("Nitron").setStyle(Style.EMPTY.withColor(0xff004f))); break;
+                case 6: tooltip.add(Text.literal("Bandit").setStyle(Style.EMPTY.withColor(0x8C6E56))); break;
+                case 7: tooltip.add(Text.literal("Yak").setStyle(Style.EMPTY.withColor(0x3FC2EA))); break;
                 default: tooltip.add(Text.literal("Normal").formatted(Formatting.DARK_GRAY)); break;
             }
         }
