@@ -10,7 +10,8 @@
 	"client": [
 		"ArmorFeatureRendererMixin",
 		"PlayerEntityRendererMixin",
-		"HeadFeatureRendererMixin"
+		"HeadFeatureRendererMixin",
+		"InGameHudMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
