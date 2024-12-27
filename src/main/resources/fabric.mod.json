@@ -26,6 +26,7 @@
 	"mixins": [
 		"raccoons-rabies.mixins.json"
 	],
+	"accessWidener": "raccoons-rabies.accesswidener",
 	"depends": {
 		"fabricloader": ">=0.16.4",
 		"minecraft": "~1.20.1",

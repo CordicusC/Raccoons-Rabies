@@ -15,8 +15,6 @@ public class RaccoonsRabiesLootTableModifiers {
             new Identifier("minecraft", "chests/stronghold_corridor");
     public static final Identifier STRONGHOLD_CROSSING_ID =
             new Identifier("minecraft","chests/stronghold_crossing");
-    public static final Identifier STRONGHOLD_LIBRARY_ID =
-            new Identifier("minecraft", "chests/stronghold_library");
 
     public static void modifyLootTables() {
         LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
@@ -37,15 +35,6 @@ public class RaccoonsRabiesLootTableModifiers {
                         .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(1.0f, 1.0f)).build());
 
                 tableBuilder.pool(poolCrossingBuilder.build());
-            }
-            if (STRONGHOLD_LIBRARY_ID.equals(id)) {
-                LootPool.Builder poolLibraryBuilder = LootPool.builder()
-                        .rolls(ConstantLootNumberProvider.create(1))
-                        .conditionally(RandomChanceLootCondition.builder(1f)) // Drop %
-                        .with(ItemEntry.builder(RaccoonsRabiesItems.BANDIT_UPGRADE))
-                        .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(1.0f, 1.0f)).build());
-
-                tableBuilder.pool(poolLibraryBuilder.build());
             }
         });
     }

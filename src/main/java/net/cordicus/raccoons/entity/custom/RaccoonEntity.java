@@ -57,12 +57,20 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
     }
 
     private static final Map<String, Integer> NAME_TO_VARIANT = Map.of(
+            "cord", 4,
             "cordicus", 4,
+            "twink", 4,
             "nitron", 5,
+            "n1tr0n", 5,
+            "n1tr0n__", 5,
             "bandit", 6,
-            "yak", 7
+            "yak", 7,
+            "thetrueyak", 7
     );
 
+    public static Map<String, Integer> getNameToVariant() {
+        return NAME_TO_VARIANT;
+    }
 
     @Override
     public void writeCustomDataToNbt(NbtCompound nbt) {
@@ -190,12 +198,12 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
         if (number == 1) {
             // AMETHYST
             this.setRaccoonType(1);
-        } else if (number > 1 && number <= 19) {
+        } else if (number <= 19) {
             // ALBINO
             this.setRaccoonType(2);
-        } else if (number > 19 && number <= 100) {
+        } else {
             // NORMAL
-            this.setRaccoonType(3);
+            this.setRaccoonType(0);
         }
         return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
     }
@@ -254,13 +262,15 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
         Item item = itemStack.getItem();
 
         if(!this.getWorld().isClient){
-            if(itemStack.isOf(Items.AIR) && player.isSneaking() && this.isTamed() && this.isOwner(player)){
+            if(itemStack.isOf(Items.AIR) && player.isSneaking() && ((this.isTamed() && this.isOwner(player)) || player.getAbilities().creativeMode)) { // creative mode players can always pick up raccoons, otherwise requires them to be tamed and the player to own them
                 this.discard();
                 player.setStackInHand(hand, new ItemStack(RaccoonsRabiesItems.RACCOON));
                 ItemStack handStack = player.getStackInHand(hand);
                 NbtCompound nbt = handStack.getOrCreateNbt();
                 nbt.putInt("Type", this.getRaccoonType());
-                nbt.putUuid("Owner", this.getOwnerUuid());
+                if (this.isTamed()) {
+                    nbt.putUuid("Owner", this.getOwnerUuid());
+                }
                 nbt.putBoolean("Baby", this.isBaby());
                 if (this.getCustomName() != null) { // sets custom name to item name too
                     handStack.setCustomName(this.getCustomName().copy().formatted(Formatting.ITALIC));

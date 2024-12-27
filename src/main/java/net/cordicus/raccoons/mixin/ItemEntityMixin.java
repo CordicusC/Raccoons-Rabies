@@ -40,8 +40,14 @@ public abstract class ItemEntityMixin extends Entity {
                     if (stack.hasNbt()) {
                         NbtCompound nbt = stack.getNbt();
                         if (nbt != null) { // if  nbt is not null, then it can be assumed that everything else is there
-                            raccoon.setTamed(true);
-                            raccoon.setOwnerUuid(nbt.getUuid("Owner"));
+                            if (nbt.contains("Owner")) {
+                                raccoon.setTamed(true);
+                                raccoon.setOwnerUuid(nbt.getUuid("Owner"));
+                                raccoon.setSitting(false);
+                            }
+                            else {
+                                raccoon.setTamed(false);
+                            }
                             raccoon.setRaccoonType(nbt.getInt("Type"));
                             raccoon.setBaby(nbt.getBoolean("Baby"));
                         }
@@ -54,7 +60,7 @@ public abstract class ItemEntityMixin extends Entity {
                         raccoon.setCustomName(stack.getName().copy().formatted(Formatting.RESET));
                     }
                     raccoon.updatePosition(this.getX(), this.getY(), this.getZ());
-                    raccoon.setPos(this.getX(), this.getY(), this.getZ());
+                    raccoon.copyPositionAndRotation(this);
                     this.getWorld().spawnEntity(raccoon);
                     stack.decrement(1);
                     ci.cancel();
