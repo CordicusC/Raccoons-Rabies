@@ -33,7 +33,9 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
+import net.minecraft.util.TimeHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.intprovider.UniformIntProvider;
 import net.minecraft.world.*;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -47,10 +49,16 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntity {
     private static final TrackedData<Integer> TYPE = DataTracker.registerData(RaccoonEntity.class, TrackedDataHandlerRegistry.INTEGER);
     private static final TrackedData<Boolean> IDLED = DataTracker.registerData(RaccoonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    private static final TrackedData<Integer> ANGER_TIME = DataTracker.registerData(RaccoonEntity.class, TrackedDataHandlerRegistry.INTEGER);
+    private static final UniformIntProvider ANGER_TIME_RANGE = TimeHelper.betweenSeconds(20, 39);
+    @Nullable
+    private UUID angryAt;
+
 
     public RaccoonEntity(EntityType<? extends AnimalEntity> entityType, World world) {
         super((EntityType<? extends TameableEntity>) entityType, world);
@@ -100,6 +108,7 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
     protected void initDataTracker() {
         super.initDataTracker();
         this.dataTracker.startTracking(TYPE, 0);
+        this.dataTracker.startTracking(ANGER_TIME, 0);
     }
 
     public int getRaccoonType() {
@@ -192,20 +201,33 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
 
     @Override
     public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt) {
-        Random random = new Random();
-        int number = random.nextInt(100) + 1;
+        this.setRaccoonType(this.getRandomRaccoonType());
 
+        return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
+    }
+
+    public int getRandomRaccoonType() { // gets random raccoon type using original code
+        int number = this.random.nextInt(100) + 1;
         if (number == 1) {
             // AMETHYST
-            this.setRaccoonType(1);
+            return 1;
         } else if (number <= 19) {
             // ALBINO
-            this.setRaccoonType(2);
-        } else {
-            // NORMAL
-            this.setRaccoonType(0);
+            return 2;
         }
-        return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
+        // NORMAL
+        return 0;
+    }
+
+    public int getWeightedRaccoonType(int type1, int type2) { // takes 2 ints, ~45% chance of being type1, ~45% chance of being type2, and ~10% chance to be a random type
+        int number = this.random.nextInt(10);
+        if (number < 4) {
+            return type1;
+        }
+        else if (number < 10) {
+            return type2;
+        }
+        return getRandomRaccoonType();
     }
 
     public static DefaultAttributeContainer.Builder createRaccoonAttributes() {
@@ -374,6 +396,11 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
                 this.mate.setBreedingAge(6000);
                 this.animal.resetLoveTicks();
                 this.mate.resetLoveTicks();
+                int childType = 2;
+                if (this.animal instanceof RaccoonEntity parent1 && this.mate instanceof RaccoonEntity parent2) {
+                    childType = getWeightedRaccoonType(parent1.getRaccoonType(), parent2.getRaccoonType());
+                    raccoonEntity.setRaccoonType(childType); // TODO: fix this not working for some reason
+                }
                 raccoonEntity.setBreedingAge(-24000);
                 raccoonEntity.refreshPositionAndAngles(this.animal.getX(), this.animal.getY(), this.animal.getZ(), 0.0F, 0.0F);
                 serverWorld.spawnEntityAndPassengers(raccoonEntity);
@@ -410,27 +437,28 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
 
     @Override
     public int getAngerTime() {
-        return 0;
+        return (Integer)this.dataTracker.get(ANGER_TIME);
     }
 
     @Override
     public void setAngerTime(int angerTime) {
-
+        this.dataTracker.set(ANGER_TIME, angerTime);
     }
 
     @Nullable
     @Override
     public UUID getAngryAt() {
-        return null;
+        return this.angryAt;
     }
 
     @Override
     public void setAngryAt(@Nullable UUID angryAt) {
-
+        this.angryAt = angryAt;
     }
 
     @Override
     public void chooseRandomAngerTime() {
+        this.setAngerTime(ANGER_TIME_RANGE.get(this.random));
     }
 
     @Nullable
@@ -459,7 +487,7 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
             this.dropStack(new ItemStack(Items.AMETHYST_SHARD, this.random.nextInt(3)));
         } else if (this.getRaccoonType() == 2) {
             this.dropStack(new ItemStack(RaccoonsRabiesItems.ALBINO_RACCOON_FUR, this.random.nextInt(3)));
-        } else if (this.getRaccoonType() == 3) {
+        } else {
             this.dropStack(new ItemStack(RaccoonsRabiesItems.RACCOON_FUR, this.random.nextInt(3)));
         }
     }
@@ -476,5 +504,15 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
     @Override
     public EntityView method_48926() {
         return this.getWorld();
+    }
+
+    @Override
+    public boolean damage(DamageSource source, float amount) { // owner cannot hit their own raccoons
+        if (source.getAttacker() instanceof PlayerEntity player && this.isTamed()) {
+            if (player.equals(this.getOwner())) {
+                return false;
+            }
+        }
+        return super.damage(source, amount);
     }
 }
