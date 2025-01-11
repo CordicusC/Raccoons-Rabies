@@ -509,7 +509,7 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
     @Override
     public boolean damage(DamageSource source, float amount) { // owner cannot hit their own raccoons
         if (source.getAttacker() instanceof PlayerEntity player && this.isTamed()) {
-            if (this.getOwner() != null && player.equals(this.getOwner())) {
+            if (this.getOwner() != null && player.equals(this.getOwner()) && !player.getMainHandStack().isIn(RaccoonsRabies.HITTABLE)) {
                 return false;
             }
         }

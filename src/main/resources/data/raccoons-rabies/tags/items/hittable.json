@@ -1,0 +1,8 @@
+{
+  "values": [
+    {
+      "id": "petfection:net",
+      "required": false
+    }
+  ]
+}
