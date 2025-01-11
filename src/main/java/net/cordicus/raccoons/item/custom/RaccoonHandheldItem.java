@@ -2,6 +2,7 @@ package net.cordicus.raccoons.item.custom;
 
 import dev.emi.trinkets.api.TrinketComponent;
 import dev.emi.trinkets.api.TrinketsApi;
+import net.cordicus.raccoons.RaccoonsRabies;
 import net.cordicus.raccoons.entity.RaccoonsRabiesEntities;
 import net.cordicus.raccoons.entity.custom.RaccoonEntity;
 import net.cordicus.raccoons.item.RaccoonsRabiesItems;
@@ -62,14 +63,23 @@ public class RaccoonHandheldItem extends Item implements GeoItem {
             entity.updatePosition(spawnLocation.x, spawnLocation.y, spawnLocation.z);
             if (context.getStack().hasNbt()) {
                 NbtCompound nbt = context.getStack().getOrCreateNbt();
+                NbtCompound subNbt = context.getStack().getOrCreateSubNbt(RaccoonsRabies.MOD_ID);
                 if (nbt != null) {
+                    if (subNbt.contains("raccoon")) {
+                        entity.readNbt(subNbt.getCompound("raccoon"));
+                        entity.readCustomDataFromNbt(subNbt.getCompound("raccoon"));
+                        entity.updatePosition(spawnLocation.x, spawnLocation.y, spawnLocation.z);
+                    }
                     if (nbt.contains("Owner")) {
                         entity.setTamed(true);
                         entity.setOwnerUuid(nbt.getUuid("Owner"));
                         entity.setSitting(context.getPlayer() != null && context.getPlayer().isSneaking()); // if player is sneaking when placing sets the raccoon to be sitting
+                        entity.setInSittingPose(context.getPlayer() != null && context.getPlayer().isSneaking());
                     }
                     else {
                         entity.setTamed(false);
+                        entity.setSitting(false);
+                        entity.setInSittingPose(false);
                     }
                     entity.setRaccoonType(nbt.getInt("Type"));
                     entity.setBaby(nbt.getBoolean("Baby"));
@@ -101,6 +111,7 @@ public class RaccoonHandheldItem extends Item implements GeoItem {
                 case 5: tooltip.add(Text.literal("Nitron (Baby)").setStyle(Style.EMPTY.withColor(0xff004f))); break;
                 case 6: tooltip.add(Text.literal("Bandit (Baby)").setStyle(Style.EMPTY.withColor(0x8C6E56))); break;
                 case 7: tooltip.add(Text.literal("Yak (Baby)").setStyle(Style.EMPTY.withColor(0x3FC2EA))); break;
+                case 8: tooltip.add(Text.literal("Rocket (Baby)").setStyle(Style.EMPTY.withColor(0x1B46DE))); break;
                 default: tooltip.add(Text.literal("Normal (Baby)").formatted(Formatting.DARK_GRAY)); break;
             }
         }
@@ -112,6 +123,7 @@ public class RaccoonHandheldItem extends Item implements GeoItem {
                 case 5: tooltip.add(Text.literal("Nitron").setStyle(Style.EMPTY.withColor(0xff004f))); break;
                 case 6: tooltip.add(Text.literal("Bandit").setStyle(Style.EMPTY.withColor(0x8C6E56))); break;
                 case 7: tooltip.add(Text.literal("Yak").setStyle(Style.EMPTY.withColor(0x3FC2EA))); break;
+                case 8: tooltip.add(Text.literal("Rocket").setStyle(Style.EMPTY.withColor(0x1B46DE))); break;
                 default: tooltip.add(Text.literal("Normal").formatted(Formatting.DARK_GRAY)); break;
             }
         }

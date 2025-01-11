@@ -1,5 +1,6 @@
 package net.cordicus.raccoons.mixin;
 
+import net.cordicus.raccoons.RaccoonsRabies;
 import net.cordicus.raccoons.entity.RaccoonsRabiesEntities;
 import net.cordicus.raccoons.entity.custom.RaccoonEntity;
 import net.cordicus.raccoons.item.RaccoonsRabiesItems;
@@ -39,14 +40,22 @@ public abstract class ItemEntityMixin extends Entity {
                 if (raccoon != null) {
                     if (stack.hasNbt()) {
                         NbtCompound nbt = stack.getNbt();
+                        NbtCompound subNbt = stack.getOrCreateSubNbt(RaccoonsRabies.MOD_ID);
                         if (nbt != null) { // if  nbt is not null, then it can be assumed that everything else is there
+                            if (subNbt.contains("raccoon")) {
+                                raccoon.readNbt(subNbt.getCompound("raccoon"));
+                                raccoon.readCustomDataFromNbt(subNbt.getCompound("raccoon"));
+                            }
                             if (nbt.contains("Owner")) {
                                 raccoon.setTamed(true);
                                 raccoon.setOwnerUuid(nbt.getUuid("Owner"));
                                 raccoon.setSitting(false);
+                                raccoon.setInSittingPose(false);
                             }
                             else {
                                 raccoon.setTamed(false);
+                                raccoon.setSitting(false);
+                                raccoon.setInSittingPose(false);
                             }
                             raccoon.setRaccoonType(nbt.getInt("Type"));
                             raccoon.setBaby(nbt.getBoolean("Baby"));

@@ -25,11 +25,8 @@ import software.bernie.geckolib.GeckoLib;
 public class RaccoonsRabies implements ModInitializer {
 	public static final String MOD_ID = "raccoons-rabies";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-	public static final StatusEffect RABIES_EFFECT;
+	public static final StatusEffect RABIES_EFFECT = Registry.register(Registries.STATUS_EFFECT, Identifier.of(MOD_ID, "rabies"), new RabiesEffect());
 
-	static {
-		RABIES_EFFECT = Registry.register(Registries.STATUS_EFFECT, Identifier.of("raccoons-rabies", "rabies"), new RabiesEffect());
-	}
 	public static Identifier id(String path) {
 		return new Identifier(RaccoonsRabies.MOD_ID, path);
 	}

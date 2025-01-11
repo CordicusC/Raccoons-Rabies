@@ -24,5 +24,7 @@ public class RaccoonsRabiesClient implements ClientModInitializer {
 
         ModelPredicateProviderRegistry.register(RaccoonsRabiesItems.RACCOON, new Identifier(RaccoonsRabies.MOD_ID, "type"),
                 (stack, world, entity, seed) -> ((float) RaccoonHandheldItem.getType(stack) / 10.0f));
+        ModelPredicateProviderRegistry.register(RaccoonsRabiesItems.RACCOON, new Identifier(RaccoonsRabies.MOD_ID, "baby"),
+                (stack, world, entity, seed) -> (stack.getOrCreateNbt().getBoolean("Baby") ? 1.0f : 0.0f));
     }
 }

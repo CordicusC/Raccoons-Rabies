@@ -67,13 +67,14 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
     private static final Map<String, Integer> NAME_TO_VARIANT = Map.of(
             "cord", 4,
             "cordicus", 4,
-            "twink", 4,
             "nitron", 5,
             "n1tr0n", 5,
             "n1tr0n__", 5,
             "bandit", 6,
             "yak", 7,
-            "thetrueyak", 7
+            "thetrueyak", 7,
+            "rocket", 8,
+            "rocket raccoon", 8
     );
 
     public static Map<String, Integer> getNameToVariant() {
@@ -220,14 +221,14 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
     }
 
     public int getWeightedRaccoonType(int type1, int type2) { // takes 2 ints, ~45% chance of being type1, ~45% chance of being type2, and ~10% chance to be a random type
-        int number = this.random.nextInt(10);
-        if (number < 4) {
+        int number = this.random.nextInt(11);
+        if (number < 4) { // 0-4, type1
             return type1;
         }
-        else if (number < 10) {
+        else if (number < 10) { // 5-9, type 2
             return type2;
         }
-        return getRandomRaccoonType();
+        return getRandomRaccoonType(); // 10, random type
     }
 
     public static DefaultAttributeContainer.Builder createRaccoonAttributes() {
@@ -241,12 +242,9 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
     @Override
     public void setTamed(boolean tamed) {
         super.setTamed(tamed);
-        if (tamed) {
-            this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(20.0);
-            this.setHealth(20.0F);
-        } else {
-            this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(8.0);
-        }
+        this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(8.0);
+        this.setHealth(8.0F);
+
 
         this.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).setBaseValue(4.0);
     }
@@ -288,12 +286,17 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
                 this.discard();
                 player.setStackInHand(hand, new ItemStack(RaccoonsRabiesItems.RACCOON));
                 ItemStack handStack = player.getStackInHand(hand);
-                NbtCompound nbt = handStack.getOrCreateNbt();
-                nbt.putInt("Type", this.getRaccoonType());
+                NbtCompound itemNbt = handStack.getOrCreateNbt();
+                NbtCompound subNbt = new NbtCompound();
+                this.saveNbt(subNbt);
+                this.writeNbt(subNbt);
+                this.writeCustomDataToNbt(subNbt);
+                itemNbt.putInt("Type", this.getRaccoonType());
                 if (this.isTamed()) {
-                    nbt.putUuid("Owner", this.getOwnerUuid());
+                    itemNbt.putUuid("Owner", this.getOwnerUuid());
                 }
-                nbt.putBoolean("Baby", this.isBaby());
+                itemNbt.putBoolean("Baby", this.isBaby());
+                handStack.getOrCreateSubNbt(RaccoonsRabies.MOD_ID).put("raccoon", subNbt);
                 if (this.getCustomName() != null) { // sets custom name to item name too
                     handStack.setCustomName(this.getCustomName().copy().formatted(Formatting.ITALIC));
                 }
@@ -372,7 +375,7 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
         @Override
         protected void breed() {
             ServerWorld serverWorld = (ServerWorld)this.world;
-            RaccoonEntity raccoonEntity = (RaccoonEntity) this.animal.createChild(serverWorld, this.mate);
+            RaccoonEntity raccoonEntity = (RaccoonEntity) ((RaccoonEntity) this.animal).createChild(serverWorld, this.mate);
             if (raccoonEntity != null) {
                 ServerPlayerEntity serverPlayerEntity = this.animal.getLovingPlayer();
                 ServerPlayerEntity serverPlayerEntity2 = this.mate.getLovingPlayer();
@@ -396,11 +399,6 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
                 this.mate.setBreedingAge(6000);
                 this.animal.resetLoveTicks();
                 this.mate.resetLoveTicks();
-                int childType = 2;
-                if (this.animal instanceof RaccoonEntity parent1 && this.mate instanceof RaccoonEntity parent2) {
-                    childType = getWeightedRaccoonType(parent1.getRaccoonType(), parent2.getRaccoonType());
-                    raccoonEntity.setRaccoonType(childType); // TODO: fix this not working for some reason
-                }
                 raccoonEntity.setBreedingAge(-24000);
                 raccoonEntity.refreshPositionAndAngles(this.animal.getX(), this.animal.getY(), this.animal.getZ(), 0.0F, 0.0F);
                 serverWorld.spawnEntityAndPassengers(raccoonEntity);
@@ -418,8 +416,10 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
     }
     @Nullable
     public RaccoonEntity createChild(ServerWorld serverWorld, PassiveEntity passiveEntity) {
+        int childType = getWeightedRaccoonType(this.getRaccoonType(), ((RaccoonEntity) passiveEntity).getRaccoonType());
         RaccoonEntity raccoonEntity = RaccoonsRabiesEntities.RACCOON.create(serverWorld);
         if (raccoonEntity != null) {
+            raccoonEntity.setRaccoonType(childType);
             UUID uUID = this.getOwnerUuid();
             if (uUID != null) {
                 raccoonEntity.setOwnerUuid(uUID);
@@ -509,7 +509,7 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
     @Override
     public boolean damage(DamageSource source, float amount) { // owner cannot hit their own raccoons
         if (source.getAttacker() instanceof PlayerEntity player && this.isTamed()) {
-            if (player.equals(this.getOwner())) {
+            if (this.getOwner() != null && player.equals(this.getOwner())) {
                 return false;
             }
         }

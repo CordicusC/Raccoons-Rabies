@@ -43,6 +43,69 @@
                 "raccoons-rabies:type": 0.7
             },
             "model": "raccoons-rabies:item/raccoon_yak"
+        },
+		{
+            "predicate": {
+                "raccoons-rabies:type": 0.8
+            },
+            "model": "raccoons-rabies:item/raccoon_rocket"
+        },
+		
+		{
+            "predicate": {
+                "raccoons-rabies:type": 0.0,
+                "raccoons-rabies:baby": 1.0
+            },
+            "model": "raccoons-rabies:item/raccoon_normal_baby"
+        },
+		{
+            "predicate": {
+                "raccoons-rabies:type": 0.1,
+                "raccoons-rabies:baby": 1.0
+            },
+            "model": "raccoons-rabies:item/raccoon_amethyst_baby"
+        },
+		{
+            "predicate": {
+                "raccoons-rabies:type": 0.2,
+                "raccoons-rabies:baby": 1.0
+            },
+            "model": "raccoons-rabies:item/raccoon_albino_baby"
+        },
+		{
+            "predicate": {
+                "raccoons-rabies:type": 0.4,
+                "raccoons-rabies:baby": 1.0
+            },
+            "model": "raccoons-rabies:item/raccoon_cordicus_baby"
+        },
+		{
+            "predicate": {
+                "raccoons-rabies:type": 0.5,
+                "raccoons-rabies:baby": 1.0
+            },
+            "model": "raccoons-rabies:item/raccoon_nitron_baby"
+        },
+		{
+            "predicate": {
+                "raccoons-rabies:type": 0.6,
+                "raccoons-rabies:baby": 1.0
+            },
+            "model": "raccoons-rabies:item/raccoon_bandit_baby"
+        },
+		{
+            "predicate": {
+                "raccoons-rabies:type": 0.7,
+                "raccoons-rabies:baby": 1.0
+            },
+            "model": "raccoons-rabies:item/raccoon_yak_baby"
+        },
+		{
+            "predicate": {
+                "raccoons-rabies:type": 0.8,
+                "raccoons-rabies:baby": 1.0
+            },
+            "model": "raccoons-rabies:item/raccoon_rocket_baby"
         }
 	]
 }
