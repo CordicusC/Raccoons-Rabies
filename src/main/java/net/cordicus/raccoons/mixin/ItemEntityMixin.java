@@ -1,17 +1,16 @@
 package net.cordicus.raccoons.mixin;
 
-import net.cordicus.raccoons.RaccoonsRabies;
 import net.cordicus.raccoons.entity.RaccoonsRabiesEntities;
 import net.cordicus.raccoons.entity.custom.RaccoonEntity;
 import net.cordicus.raccoons.item.RaccoonsRabiesItems;
-import net.cordicus.raccoons.item.custom.RaccoonHandheldItem;
+import net.cordicus.raccoons.item.component.RaccoonHandheldDataComponent;
+import net.cordicus.raccoons.item.component.RaccoonsRabiesItemComponents;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,6 +19,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.UUID;
 
 @Mixin(ItemEntity.class)
 public abstract class ItemEntityMixin extends Entity {
@@ -38,32 +39,32 @@ public abstract class ItemEntityMixin extends Entity {
             if (!this.getWorld().isClient()) {
                 RaccoonEntity raccoon = RaccoonsRabiesEntities.RACCOON.create(this.getWorld());
                 if (raccoon != null) {
-                    if (stack.hasNbt()) {
-                        NbtCompound nbt = stack.getNbt();
-                        NbtCompound subNbt = stack.getOrCreateSubNbt(RaccoonsRabies.MOD_ID);
-                        if (nbt != null) { // if  nbt is not null, then it can be assumed that everything else is there
-                            if (subNbt.contains("raccoon")) {
-                                raccoon.readNbt(subNbt.getCompound("raccoon"));
-                                raccoon.readCustomDataFromNbt(subNbt.getCompound("raccoon"));
-                            }
-                            if (nbt.contains("Owner")) {
-                                raccoon.setTamed(true);
-                                raccoon.setOwnerUuid(nbt.getUuid("Owner"));
-                                raccoon.setSitting(false);
-                                raccoon.setInSittingPose(false);
-                            }
-                            else {
-                                raccoon.setTamed(false);
-                                raccoon.setSitting(false);
-                                raccoon.setInSittingPose(false);
-                            }
-                            raccoon.setRaccoonType(nbt.getInt("Type"));
-                            raccoon.setBaby(nbt.getBoolean("Baby"));
+                    if (stack.get(DataComponentTypes.CUSTOM_DATA) != null) {
+                        NbtCompound nbt = stack.get(DataComponentTypes.CUSTOM_DATA).copyNbt();
+                        if (nbt != null) {
+                            raccoon.readNbt(nbt);
+                            raccoon.readCustomDataFromNbt(nbt);
                         }
                     }
-                    else { // in case there is NO nbt, falls back to not tamed and default type (should only happen from /give). it also dupes with /give. I don't care how or why and it's not exactly intended so it's whatever
-                        raccoon.setTamed(false);
-                        raccoon.setRaccoonType(0);
+                    if (stack.get(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA) != null) {
+                        RaccoonHandheldDataComponent component = stack.get(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA);
+                        if (!component.owner().isEmpty()) {
+                            raccoon.setTamed(true, true);
+                            raccoon.setOwnerUuid(UUID.fromString(component.owner()));
+                        }
+                        else {
+                            raccoon.setTamed(false, true);
+                        }
+                        raccoon.setSitting(false);
+                        raccoon.setInSittingPose(false);
+
+                        raccoon.setRaccoonType(component.type());
+                        raccoon.setBaby(component.baby());
+                    }
+                    else { // data fallback
+                        raccoon.setTamed(false, true);
+                        raccoon.setSitting(false);
+                        raccoon.setInSittingPose(false);
                     }
                     if (!stack.getName().equals(RaccoonsRabiesItems.RACCOON.getDefaultStack().getName())) {
                         raccoon.setCustomName(stack.getName().copy().formatted(Formatting.RESET));

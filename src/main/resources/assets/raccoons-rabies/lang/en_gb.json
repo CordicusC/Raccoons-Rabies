@@ -16,6 +16,7 @@
   "subtitles.raccoons-rabies.entity_raccoon_death": "Raccoon dies",
 
   "effect.raccoons-rabies.rabies": "Rabies",
+  "effect.raccoons-rabies.rabies.desc": "Makes you hydrophobic",
 
   "itemgroup.raccoon": "Raccoons & Rabies",
 
@@ -27,10 +28,13 @@
 
   "tooltip.bandit_hood.hint": "§8Press [§7Right Click§8] to toggle visibility",
 
-  "upgrade.raccoons-rabies.bandit_upgrade": "Bandit Armour",
+  "item.raccoons-rabies.bandit_upgrade": "Smithing Template",
+  "upgrade.raccoons-rabies.bandit_upgrade": "Bandit Upgrade",
   "item.raccoons-rabies.smithing_template.bandit_upgrade.apply_to": "Diamond Equipment",
   "item.raccoons-rabies.smithing_template.bandit_upgrade.ingredients": "Raccoon Furs",
 
   "item.raccoons-rabies.smithing_template.base_slot_description": "Add Diamond armour",
-  "item.raccoons-rabies.smithing_template.additions_slot_description": "Add a Raccoon Fur"
+  "item.raccoons-rabies.smithing_template.additions_slot_description": "Add a Raccoon Fur",
+
+  "tag.item.raccoons-rabies.hittable": "Raccoon Hittable"
 }

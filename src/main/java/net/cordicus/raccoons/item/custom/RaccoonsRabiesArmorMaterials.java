@@ -1,91 +1,33 @@
 package net.cordicus.raccoons.item.custom;
 
-import net.cordicus.raccoons.item.RaccoonsRabiesItems;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
+import net.cordicus.raccoons.RaccoonsRabies;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.sound.SoundEvent;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.Util;
 
+import java.util.EnumMap;
+import java.util.List;
 import java.util.function.Supplier;
 
-public enum RaccoonsRabiesArmorMaterials implements ArmorMaterial {
-    BANDIT("bandit", 19, new int[] {3, 8, 6, 3}, 19,
-            SoundEvents.ITEM_ARMOR_EQUIP_CHAIN, 0f, 0.1f, () -> Ingredient.ofItems(Items.DIAMOND));
+public class RaccoonsRabiesArmorMaterials {
 
-    private final String name;
-    private final int durabilityMultiplier;
-    private final int[] protectionAmounts;
-    private final int enchantability;
-    private final SoundEvent equipSound;
-    private final float toughness;
-    private final float knockbackResistance;
-    private final Supplier<Ingredient> repairIngredient;
+    public static final RegistryEntry<ArmorMaterial> BANDIT = registerMaterial("bandit",
+        () -> new ArmorMaterial(Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+            map.put(ArmorItem.Type.BOOTS, 3);
+            map.put(ArmorItem.Type.LEGGINGS, 6);
+            map.put(ArmorItem.Type.CHESTPLATE, 8);
+            map.put(ArmorItem.Type.HELMET, 3);
+            map.put(ArmorItem.Type.BODY, 11);
+    }), 19, SoundEvents.ITEM_ARMOR_EQUIP_CHAIN, () -> Ingredient.ofItems(Items.DIAMOND),
+                List.of(new ArmorMaterial.Layer(RaccoonsRabies.id("bandit"))), 0f, 0.1f));
 
-    private static final int[] BASE_DURABILITY = { 11, 16, 15, 13};
-
-    RaccoonsRabiesArmorMaterials(String name, int durabilityMultiplier, int[] protectionAmounts, int enchantability, SoundEvent equipSound, float toughness,
-                                 float knockbackResistance, Supplier<Ingredient> repairIngredient) {
-        this.name = name;
-        this.durabilityMultiplier = durabilityMultiplier;
-        this.protectionAmounts = protectionAmounts;
-        this.enchantability = enchantability;
-        this.equipSound = equipSound;
-        this.toughness = toughness;
-        this.knockbackResistance = knockbackResistance;
-        this.repairIngredient = repairIngredient;
-    }
-
-    public static boolean isWearingFullArmorSet(LivingEntity entity) {
-        if (entity.getEquippedStack(EquipmentSlot.HEAD).isOf(RaccoonsRabiesItems.BANDIT_HELMET)
-                && entity.getEquippedStack(EquipmentSlot.CHEST).isOf(RaccoonsRabiesItems.BANDIT_CHESTPLATE)
-                && entity.getEquippedStack(EquipmentSlot.LEGS).isOf(RaccoonsRabiesItems.BANDIT_LEGGINGS)
-                && entity.getEquippedStack(EquipmentSlot.FEET).isOf(RaccoonsRabiesItems.BANDIT_BOOTS)) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public int getDurability(ArmorItem.Type type) {
-        return BASE_DURABILITY[type.ordinal()]* this.durabilityMultiplier;
-    }
-
-    @Override
-    public int getProtection(ArmorItem.Type type) {
-        return protectionAmounts[type.ordinal()];
-    }
-
-    @Override
-    public int getEnchantability() {
-        return this.enchantability;
-    }
-
-    @Override
-    public SoundEvent getEquipSound() {
-        return this.equipSound;
-    }
-
-    @Override
-    public Ingredient getRepairIngredient() {
-        return this.repairIngredient.get();
-    }
-
-    @Override
-    public String getName() {
-        return "bandit";
-    }
-
-    @Override
-    public float getToughness() {
-        return this.toughness;
-    }
-
-    @Override
-    public float getKnockbackResistance() {
-        return this.knockbackResistance;
+    private static RegistryEntry<ArmorMaterial> registerMaterial(String id, Supplier<ArmorMaterial> armorMaterialSupplier) {
+        return Registry.registerReference(Registries.ARMOR_MATERIAL, RaccoonsRabies.id(id), armorMaterialSupplier.get());
     }
 }

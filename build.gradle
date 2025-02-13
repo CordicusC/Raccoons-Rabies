@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.7-SNAPSHOT'
+	id 'fabric-loom' version '1.9-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -16,11 +16,10 @@ loom {
 
 repositories {
 	maven {
-	name = 'GeckoLib'
-	url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
-	content {
-		includeGroupByRegex("software\\.bernie.*")
-		includeGroup("com.eliotlash.mclib")
+		name = 'GeckoLib'
+		url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+		content {
+			includeGroup("software.bernie.geckolib")
 		}
 	}
 	maven { url "https://maven.ladysnake.org/releases" }
@@ -41,7 +40,6 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	modImplementation("software.bernie.geckolib:geckolib-fabric-${minecraft_version}:${geckolib_version}")
-	implementation("com.eliotlash.mclib:mclib:20")
 
 	modImplementation("dev.emi:trinkets:${project.trinkets_version}")
 }

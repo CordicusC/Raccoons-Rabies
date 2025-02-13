@@ -1,54 +1,60 @@
 package net.cordicus.raccoons.entity.client;
 
 import net.cordicus.raccoons.RaccoonsRabies;
-import net.cordicus.raccoons.entity.animations.RaccoonsRabiesAnimations;
 import net.cordicus.raccoons.entity.custom.RaccoonEntity;
-import net.minecraft.client.model.*;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.entity.model.SinglePartEntityModel;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.model.GeoModel;
-
-import java.util.Objects;
+import software.bernie.geckolib.renderer.GeoRenderer;
 
 public class RaccoonModel extends GeoModel<RaccoonEntity> {
 	//AWAKE
-	private static final Identifier RACCOON = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/raccoon.png");
-	private static final Identifier AMETHYST = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/amethyst_raccoon.png");
-	private static final Identifier ALBINO = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/albino_raccoon.png");
+	private static final Identifier RACCOON = RaccoonsRabies.id("textures/entity/raccoon.png");
+	private static final Identifier AMETHYST = RaccoonsRabies.id("textures/entity/amethyst_raccoon.png");
+	private static final Identifier ALBINO = RaccoonsRabies.id("textures/entity/albino_raccoon.png");
 	//SLEEPING
-	private static final Identifier RACCOON_S = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/raccoon_sleeping.png");
-	private static final Identifier AMETHYST_S = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/amethyst_raccoon_sleeping.png");
-	private static final Identifier ALBINO_S = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/albino_raccoon_sleeping.png");
+	private static final Identifier RACCOON_S = RaccoonsRabies.id("textures/entity/raccoon_sleeping.png");
+	private static final Identifier AMETHYST_S = RaccoonsRabies.id("textures/entity/amethyst_raccoon_sleeping.png");
+	private static final Identifier ALBINO_S = RaccoonsRabies.id("textures/entity/albino_raccoon_sleeping.png");
 
-	private static final Identifier CORD = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/cord_raccoon.png");
-	private static final Identifier NITRON = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/nitron_raccoon.png");
-	private static final Identifier CORD_S = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/cord_raccoon_sleeping.png");
-	private static final Identifier NITRON_S = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/nitron_raccoon_sleeping.png");
-	private static final Identifier BANDIT = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/bandit_raccoon.png");
-	private static final Identifier BANDIT_S = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/bandit_raccoon_sleeping.png");
-	private static final Identifier YAK = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/yak_raccoon.png");
-	private static final Identifier YAK_S = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/yak_raccoon_sleeping.png");
-	private static final Identifier ROCKET = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/rocket_raccoon.png");
-	private static final Identifier ROCKET_S = new Identifier(RaccoonsRabies.MOD_ID, "textures/entity/rocket_raccoon_sleeping.png");
+	private static final Identifier CORD = RaccoonsRabies.id("textures/entity/cord_raccoon.png");
+	private static final Identifier NITRON = RaccoonsRabies.id("textures/entity/nitron_raccoon.png");
+	private static final Identifier CORD_S = RaccoonsRabies.id("textures/entity/cord_raccoon_sleeping.png");
+	private static final Identifier NITRON_S = RaccoonsRabies.id("textures/entity/nitron_raccoon_sleeping.png");
+	private static final Identifier BANDIT = RaccoonsRabies.id("textures/entity/bandit_raccoon.png");
+	private static final Identifier BANDIT_S = RaccoonsRabies.id("textures/entity/bandit_raccoon_sleeping.png");
+	private static final Identifier YAK = RaccoonsRabies.id("textures/entity/yak_raccoon.png");
+	private static final Identifier YAK_S = RaccoonsRabies.id("textures/entity/yak_raccoon_sleeping.png");
+	private static final Identifier ROCKET = RaccoonsRabies.id("textures/entity/rocket_raccoon.png");
+	private static final Identifier ROCKET_S = RaccoonsRabies.id("textures/entity/rocket_raccoon_sleeping.png");
 
 
 	@Override
-	public Identifier getModelResource(RaccoonEntity animatable) {
-		return new Identifier(RaccoonsRabies.MOD_ID, "geo/raccoon.geo.json");
+	public Identifier getModelResource(RaccoonEntity animatable, GeoRenderer<RaccoonEntity> renderer) {
+		return RaccoonsRabies.id("geo/raccoon.geo.json");
 	}
 
 	@Override
-	public Identifier getTextureResource(RaccoonEntity raccoon) {
+	public Identifier getTextureResource(RaccoonEntity raccoon, GeoRenderer<RaccoonEntity> renderer) {
 		return getRaccoonTexture(raccoon);
 	}
 
+	// this is marked for deprecation but the horse is making me do it
+	@SuppressWarnings("removal")
+	@Override
+	public Identifier getModelResource(RaccoonEntity raccoon) {
+		return RaccoonsRabies.id("geo/raccoon.geo.json");
+	}
+
+	@SuppressWarnings("removal")
+    @Override
+	public Identifier getTextureResource(RaccoonEntity raccoon) {
+		return getRaccoonTexture(raccoon);
+	}
+	// this one too. why must I implement you. and yet you yell at me
+
 	@Override
 	public Identifier getAnimationResource(RaccoonEntity animatable) {
-		return new Identifier(RaccoonsRabies.MOD_ID, "animations/raccoon.animation.json");
+		return RaccoonsRabies.id("animations/raccoon.animation.json");
 	}
 
 	public static Identifier getRaccoonTexture(RaccoonEntity raccoonType) {

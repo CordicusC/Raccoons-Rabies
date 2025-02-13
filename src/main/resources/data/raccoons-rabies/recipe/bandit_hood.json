@@ -7,7 +7,7 @@
     "item": "minecraft:diamond_helmet"
   },
   "result": {
-    "item": "raccoons-rabies:bandit_hood"
+    "id": "raccoons-rabies:bandit_hood"
   },
   "template": {
     "item": "raccoons-rabies:bandit_upgrade"

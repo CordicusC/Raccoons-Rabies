@@ -2,55 +2,49 @@ package net.cordicus.raccoons.item.custom;
 
 import dev.emi.trinkets.api.TrinketComponent;
 import dev.emi.trinkets.api.TrinketsApi;
-import net.cordicus.raccoons.RaccoonsRabies;
 import net.cordicus.raccoons.entity.RaccoonsRabiesEntities;
 import net.cordicus.raccoons.entity.custom.RaccoonEntity;
 import net.cordicus.raccoons.item.RaccoonsRabiesItems;
-import net.cordicus.raccoons.item.client.RaccoonHandheldRenderer;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.entity.EquipmentSlot;
+import net.cordicus.raccoons.item.component.RaccoonHandheldDataComponent;
+import net.cordicus.raccoons.item.component.RaccoonsRabiesItemComponents;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.*;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.animatable.GeoItem;
-import software.bernie.geckolib.animatable.client.RenderProvider;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+import java.util.UUID;
 
-public class RaccoonHandheldItem extends Item implements GeoItem {
+public class RaccoonHandheldItem extends Item {
 
     public RaccoonHandheldItem(Settings settings) {
         super(settings);
     }
 
-    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-    private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
-
     public static int getType(ItemStack stack) {
-        if (stack.getNbt() == null) {
-            setType(stack,0);
+        if (stack.get(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA) == null) {
+            stack.set(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA, new RaccoonHandheldDataComponent(0, "", false));
         }
-        return stack.getNbt().getInt("Type");
+        return stack.get(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA).type();
     }
 
     public static void setType(ItemStack stack, int type) {
-        stack.getOrCreateNbt().putInt("Type", type);
+        RaccoonHandheldDataComponent component = stack.getOrDefault(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA, new RaccoonHandheldDataComponent(type, "", false));
+        stack.set(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA, component.withType(type));
+    }
+
+    public static boolean isBaby(ItemStack stack) {
+        if (stack.get(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA) == null) {
+            stack.set(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA, new RaccoonHandheldDataComponent(0, "", false));
+        }
+        return stack.get(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA).baby();
     }
 
     @Override
@@ -58,35 +52,35 @@ public class RaccoonHandheldItem extends Item implements GeoItem {
         Vec3d hitResult = context.getHitPos();
 
         Vec3d spawnLocation = new Vec3d(hitResult.x, hitResult.y, hitResult.z);
-        if (!context.getWorld().isClient) {
+        if (!context.getWorld().isClient()) {
             RaccoonEntity entity = new RaccoonEntity(RaccoonsRabiesEntities.RACCOON, context.getWorld());
             entity.updatePosition(spawnLocation.x, spawnLocation.y, spawnLocation.z);
-            if (context.getStack().hasNbt()) {
-                NbtCompound nbt = context.getStack().getOrCreateNbt();
-                NbtCompound subNbt = context.getStack().getOrCreateSubNbt(RaccoonsRabies.MOD_ID);
+            if (context.getStack().get(DataComponentTypes.CUSTOM_DATA) != null) {
+                NbtCompound nbt = context.getStack().get(DataComponentTypes.CUSTOM_DATA).copyNbt();
                 if (nbt != null) {
-                    if (subNbt.contains("raccoon")) {
-                        entity.readNbt(subNbt.getCompound("raccoon"));
-                        entity.readCustomDataFromNbt(subNbt.getCompound("raccoon"));
-                        entity.updatePosition(spawnLocation.x, spawnLocation.y, spawnLocation.z);
-                    }
-                    if (nbt.contains("Owner")) {
-                        entity.setTamed(true);
-                        entity.setOwnerUuid(nbt.getUuid("Owner"));
-                        entity.setSitting(context.getPlayer() != null && context.getPlayer().isSneaking()); // if player is sneaking when placing sets the raccoon to be sitting
-                        entity.setInSittingPose(context.getPlayer() != null && context.getPlayer().isSneaking());
-                    }
-                    else {
-                        entity.setTamed(false);
-                        entity.setSitting(false);
-                        entity.setInSittingPose(false);
-                    }
-                    entity.setRaccoonType(nbt.getInt("Type"));
-                    entity.setBaby(nbt.getBoolean("Baby"));
+                    entity.readNbt(nbt);
+                    entity.readCustomDataFromNbt(nbt);
+                    entity.updatePosition(spawnLocation.x, spawnLocation.y, spawnLocation.z);
                 }
             }
-            else { // in the case of no nbt, falls back on this as the default
-                entity.setTamed(false);
+            if (context.getStack().get(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA) != null) {
+                RaccoonHandheldDataComponent component = context.getStack().get(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA);
+                if (!component.owner().isEmpty()) {
+                    entity.setTamed(true, true);
+                    entity.setOwnerUuid(UUID.fromString(component.owner()));
+                    entity.setSitting(context.getPlayer() != null && context.getPlayer().isSneaking()); // if player is sneaking when placing sets the raccoon to be sitting
+                    entity.setInSittingPose(context.getPlayer() != null && context.getPlayer().isSneaking());
+                }
+                else {
+                    entity.setTamed(false, true);
+                    entity.setSitting(false);
+                    entity.setInSittingPose(false);
+                }
+                entity.setRaccoonType(component.type());
+                entity.setBaby(component.baby());
+            }
+            else { // in the case of no data at all, falls back on this as the default
+                entity.setTamed(false, true);
                 entity.setRaccoonType(0);
             }
             if (!context.getStack().getName().equals(this.getDefaultStack().getName())) { // custom item name :p
@@ -100,11 +94,11 @@ public class RaccoonHandheldItem extends Item implements GeoItem {
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        int type = stack.getOrCreateNbt().getInt("Type");
+    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
+        int raccoonType = stack.get(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA).type();
 
-        if(stack.getOrCreateNbt().getBoolean("Baby")) {
-            switch (type) {
+        if(stack.get(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA).baby()) {
+            switch (raccoonType) {
                 case 1: tooltip.add(Text.literal("Amethyst (Baby)").setStyle(Style.EMPTY.withColor(0xC890F0))); break;
                 case 2: tooltip.add(Text.literal("Albino (Baby)").setStyle(Style.EMPTY.withColor(0x796A63))); break;
                 case 4: tooltip.add(Text.literal("Cordicus (Baby)").setStyle(Style.EMPTY.withColor(0xfb6cc4))); break;
@@ -116,7 +110,7 @@ public class RaccoonHandheldItem extends Item implements GeoItem {
             }
         }
         else {
-            switch (type) {
+            switch (raccoonType) {
                 case 1: tooltip.add(Text.literal("Amethyst").setStyle(Style.EMPTY.withColor(0xC890F0))); break;
                 case 2: tooltip.add(Text.literal("Albino").setStyle(Style.EMPTY.withColor(0x796A63))); break;
                 case 4: tooltip.add(Text.literal("Cordicus").setStyle(Style.EMPTY.withColor(0xfb6cc4))); break;
@@ -127,40 +121,7 @@ public class RaccoonHandheldItem extends Item implements GeoItem {
                 default: tooltip.add(Text.literal("Normal").formatted(Formatting.DARK_GRAY)); break;
             }
         }
-
-        super.appendTooltip(stack, world, tooltip, context);
-    }
-
-    @Override
-    public void createRenderer(Consumer<Object> consumer) {
-        consumer.accept(new RenderProvider() {
-            private RaccoonHandheldRenderer renderer;
-
-            @Override
-            public BipedEntityModel<LivingEntity> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, BipedEntityModel<LivingEntity> original) {
-                if(this.renderer == null)
-                    this.renderer = new RaccoonHandheldRenderer();
-
-                this.renderer.prepForRender(livingEntity, itemStack, equipmentSlot, original);
-
-                return this.renderer;
-            }
-        });
-    }
-
-    @Override
-    public Supplier<Object> getRenderProvider() {
-        return this.renderProvider;
-    }
-
-    @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-
-    }
-
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.cache;
+        super.appendTooltip(stack, context, tooltip, type);
     }
 
     public static boolean hasRaccoonEquipped(LivingEntity livingEntity) {

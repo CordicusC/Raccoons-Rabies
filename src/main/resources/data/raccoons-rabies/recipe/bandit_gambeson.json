@@ -4,10 +4,10 @@
     "tag": "raccoons-rabies:raccoon_furs"
   },
   "base": {
-    "item": "minecraft:diamond_boots"
+    "item": "minecraft:diamond_chestplate"
   },
   "result": {
-    "item": "raccoons-rabies:bandit_boots"
+    "id": "raccoons-rabies:bandit_gambeson"
   },
   "template": {
     "item": "raccoons-rabies:bandit_upgrade"

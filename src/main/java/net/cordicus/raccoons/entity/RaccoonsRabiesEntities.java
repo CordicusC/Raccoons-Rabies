@@ -12,11 +12,11 @@ import net.minecraft.util.Identifier;
 
 public class RaccoonsRabiesEntities {
     public static final EntityType<RaccoonEntity> RACCOON = Registry.register(Registries.ENTITY_TYPE,
-            new Identifier(RaccoonsRabies.MOD_ID, "raccoon"),
-            FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, RaccoonEntity::new)
-                    .dimensions(EntityDimensions.fixed(0.6f, 0.6f)).build());
+            RaccoonsRabies.id("raccoon"),
+            EntityType.Builder.create(RaccoonEntity::new, SpawnGroup.CREATURE)
+                    .dimensions(0.6f, 0.6f).build());
 
     public static void registerModEntities() {
-        RaccoonsRabies.LOGGER.info("Registering Entities for "+ RaccoonsRabies.MOD_ID);
+
     }
 }

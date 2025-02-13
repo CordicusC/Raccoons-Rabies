@@ -14,10 +14,11 @@ public class RabiesEffect extends StatusEffect {
 
 
     @Override
-    public void applyUpdateEffect(LivingEntity entity, int amplifier) {
+    public boolean applyUpdateEffect(LivingEntity entity, int amplifier) {
         if (entity instanceof PlayerEntity player) {
             player.damage(RaccoonsRabiesDamageTypes.create(player.getWorld(), RaccoonsRabiesDamageTypes.RABIES), 0.5F);
         }
+        return super.applyUpdateEffect(entity, amplifier);
     }
 
     @Override

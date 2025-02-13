@@ -13,7 +13,7 @@ public class RaccoonsRabiesSounds {
 
 
     private static SoundEvent registerSoundEvent(String name) {
-        Identifier id = new Identifier(RaccoonsRabies.MOD_ID, name);
+        Identifier id = RaccoonsRabies.id(name);
         return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(id));
     }
 

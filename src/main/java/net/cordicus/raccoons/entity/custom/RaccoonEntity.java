@@ -3,8 +3,12 @@ package net.cordicus.raccoons.entity.custom;
 import net.cordicus.raccoons.RaccoonsRabies;
 import net.cordicus.raccoons.entity.RaccoonsRabiesEntities;
 import net.cordicus.raccoons.item.RaccoonsRabiesItems;
+import net.cordicus.raccoons.item.component.RaccoonHandheldDataComponent;
+import net.cordicus.raccoons.item.component.RaccoonsRabiesItemComponents;
 import net.cordicus.raccoons.sounds.RaccoonsRabiesSounds;
 import net.minecraft.advancement.criterion.Criteria;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
@@ -18,11 +22,9 @@ import net.minecraft.entity.mob.Angerable;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -39,17 +41,15 @@ import net.minecraft.util.math.intprovider.UniformIntProvider;
 import net.minecraft.world.*;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.Map;
-import java.util.Random;
 import java.util.UUID;
-import java.util.function.Predicate;
 
 public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntity {
     private static final TrackedData<Integer> TYPE = DataTracker.registerData(RaccoonEntity.class, TrackedDataHandlerRegistry.INTEGER);
@@ -106,10 +106,11 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
     }
 
     @Override
-    protected void initDataTracker() {
-        super.initDataTracker();
-        this.dataTracker.startTracking(TYPE, 0);
-        this.dataTracker.startTracking(ANGER_TIME, 0);
+    protected void initDataTracker(DataTracker.Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(TYPE, 0);
+        builder.add(IDLED, false);
+        builder.add(ANGER_TIME, 0);
     }
 
     public int getRaccoonType() {
@@ -141,9 +142,7 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.raccoon.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.raccoon.walk");
     protected static final RawAnimation SIT = RawAnimation.begin().thenLoop("animation.raccoon.sitting");
-    protected <E extends RaccoonEntity>PlayState raccoonAnimController(final software.bernie.geckolib.core.animation.AnimationState<E> event) {
-        RaccoonEntity raccoon = (RaccoonEntity) event.getAnimatable();
-
+    protected <E extends RaccoonEntity> PlayState raccoonAnimController(final software.bernie.geckolib.animation.AnimationState<E> event) {
         if (event.getAnimatable().isInSittingPose()) {
             return event.setAndContinue(SIT);
         }
@@ -168,7 +167,7 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
 
     @Override
     protected void updateLimbs(float posDelta) {
-        float f = this.getPose() == EntityPose.STANDING ? f = Math.min(posDelta * 6.0F, 1.0F): 0.0f;
+        float f = this.getPose() == EntityPose.STANDING ? Math.min(posDelta * 6.0F, 1.0F): 0.0f;
         this.limbAnimator.updateLimbs(f, 0.2F);
     }
 
@@ -195,16 +194,16 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
         this.targetSelector.add(3, new RevengeGoal(this).setGroupRevenge());
         this.targetSelector.add(8, new UniversalAngerGoal<>(this, true));
         this.targetSelector.add(2, new AttackWithOwnerGoal(this));
-        this.goalSelector.add(6, new FollowOwnerGoal(this, 1.0, 10.0F, 2.0F, false));
+        this.goalSelector.add(6, new FollowOwnerGoal(this, 1.0, 10.0F, 2.0F));
         this.goalSelector.add(10, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
         this.goalSelector.add(10, new LookAroundGoal(this));
     }
 
     @Override
-    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt) {
+    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData) {
         this.setRaccoonType(this.getRandomRaccoonType());
 
-        return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
+        return super.initialize(world, difficulty, spawnReason, entityData);
     }
 
     public int getRandomRaccoonType() { // gets random raccoon type using original code
@@ -240,32 +239,27 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
     }
 
     @Override
-    public void setTamed(boolean tamed) {
-        super.setTamed(tamed);
-        this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(8.0);
-        this.setHealth(8.0F);
-
-
-        this.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).setBaseValue(4.0);
+    protected void updateAttributesForTamed() {
+        if (this.isTamed()) {
+            this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(12.0f);
+            this.setHealth(12.0f);
+        } else {
+            this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(4.0f);
+        }
     }
 
     @Override
     public boolean isBreedingItem(ItemStack stack) {
-        Item item = stack.getItem();
-        return stack.getItem().isFood();
+        return stack.contains(DataComponentTypes.FOOD);
     }
-
-    private static final Random RANDOM = new Random();
 
     @Override
     public boolean tryAttack(Entity target) {
-        boolean bl = target.damage(this.getDamageSources().mobAttack(this), (float)((int)this.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE)));
+        boolean bl = super.tryAttack(target);
         if (bl) {
-            this.applyDamageEffects(this, target);
-            int check = RANDOM.nextInt(2 * 100 + 1) - 100;
-            if (target instanceof LivingEntity livingEntity && check <= 50) {
-                StatusEffectInstance statusEffectInstance = new StatusEffectInstance(RaccoonsRabies.RABIES_EFFECT, 100, 0);
-                livingEntity.addStatusEffect(statusEffectInstance);
+            int check = this.getRandom().nextInt(100 + 1);
+            if (target instanceof LivingEntity livingEntity && check <= 50) { // 50% chance to give rabies, rabies duration is 40 ticks + (the check * 2) (min is 2 seconds, max is 140 ticks or 7 seconds)
+                livingEntity.addStatusEffect(new StatusEffectInstance(RaccoonsRabies.RABIES_EFFECT, (check * 2) + 40, 0));
             }
         }
         return bl;
@@ -279,41 +273,39 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
     @Override
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         ItemStack itemStack = player.getStackInHand(hand);
-        Item item = itemStack.getItem();
 
         if(!this.getWorld().isClient){
-            if(itemStack.isOf(Items.AIR) && player.isSneaking() && ((this.isTamed() && this.isOwner(player)) || player.getAbilities().creativeMode)) { // creative mode players can always pick up raccoons, otherwise requires them to be tamed and the player to own them
+            if(itemStack.isEmpty() && player.isSneaking() && ((this.isTamed() && this.isOwner(player)) || player.getAbilities().creativeMode)) { // creative mode players can always pick up raccoons, otherwise requires them to be tamed and the player to own them
                 this.discard();
                 player.setStackInHand(hand, new ItemStack(RaccoonsRabiesItems.RACCOON));
                 ItemStack handStack = player.getStackInHand(hand);
-                NbtCompound itemNbt = handStack.getOrCreateNbt();
-                NbtCompound subNbt = new NbtCompound();
-                this.saveNbt(subNbt);
-                this.writeNbt(subNbt);
-                this.writeCustomDataToNbt(subNbt);
-                itemNbt.putInt("Type", this.getRaccoonType());
-                if (this.isTamed()) {
-                    itemNbt.putUuid("Owner", this.getOwnerUuid());
+                NbtCompound nbt = new NbtCompound();
+                this.saveNbt(nbt);
+                this.writeNbt(nbt);
+                this.writeCustomDataToNbt(nbt);
+                if (this.isTamed()) { // keeping this just in case :p
+                    nbt.putUuid("Owner", this.getOwnerUuid());
                 }
-                itemNbt.putBoolean("Baby", this.isBaby());
-                handStack.getOrCreateSubNbt(RaccoonsRabies.MOD_ID).put("raccoon", subNbt);
+                String ownerUuid = (this.isTamed() && this.getOwnerUuid() != null) ? this.getOwnerUuid().toString() : ""; // preserved entity nbt and essential raccoon entity data are now stored separately for convenience and optimization reasons
+                handStack.set(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA, new RaccoonHandheldDataComponent(this.getRaccoonType(), ownerUuid, this.isBaby()));
+                handStack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
                 if (this.getCustomName() != null) { // sets custom name to item name too
-                    handStack.setCustomName(this.getCustomName().copy().formatted(Formatting.ITALIC));
+                    handStack.set(DataComponentTypes.CUSTOM_NAME, (this.getCustomName().copy().formatted(Formatting.ITALIC)));
                 }
                 return ActionResult.SUCCESS;
             }
         }
 
         if (this.getWorld().isClient) {
-            boolean bl = this.isOwner(player) || this.isTamed() || itemStack.getItem().isFood() && !this.isTamed() && !this.hasAngerTime();
+            boolean bl = this.isOwner(player) || this.isTamed() || itemStack.getComponents().contains(DataComponentTypes.FOOD) && !this.isTamed() && !this.hasAngerTime();
             return bl ? ActionResult.CONSUME : ActionResult.PASS;
         } else if (this.isTamed()) {
             if (this.isBreedingItem(itemStack) && this.getHealth() < this.getMaxHealth()) {
                 if (!player.getAbilities().creativeMode) {
                     itemStack.decrement(1);
                 }
-
-                this.heal((float)item.getFoodComponent().getHunger());
+                float f = itemStack.get(DataComponentTypes.FOOD) != null ? (float)itemStack.get(DataComponentTypes.FOOD).nutrition() : 1.0F;
+                this.heal(2.0F * f);
                 return ActionResult.SUCCESS;
             } else {
                 ActionResult actionResult = super.interactMob(player, hand);
@@ -327,7 +319,7 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
                     return actionResult;
                 }
             }
-        } else if (itemStack.isFood() && !this.hasAngerTime()) {
+        } else if (itemStack.get(DataComponentTypes.FOOD) != null && !this.hasAngerTime()) {
             if (!player.getAbilities().creativeMode) {
                 itemStack.decrement(1);
             }
@@ -350,7 +342,7 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
 
     @Override
     public Vec3d getLeashOffset() {
-        return new Vec3d(0.0, (double)(0.55F * this.getStandingEyeHeight()), (double)(this.getWidth() * 0.4F));
+        return new Vec3d(0.0, (0.55F * this.getStandingEyeHeight()), (this.getWidth() * 0.4F));
     }
 
     class EscapeWhenNotAggressiveGoal extends EscapeDangerGoal {
@@ -413,7 +405,9 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
     }
 
     private void addTrustedUuid(UUID uuid) {
+
     }
+
     @Nullable
     public RaccoonEntity createChild(ServerWorld serverWorld, PassiveEntity passiveEntity) {
         int childType = getWeightedRaccoonType(this.getRaccoonType(), ((RaccoonEntity) passiveEntity).getRaccoonType());
@@ -423,10 +417,9 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
             UUID uUID = this.getOwnerUuid();
             if (uUID != null) {
                 raccoonEntity.setOwnerUuid(uUID);
-                raccoonEntity.setTamed(true);
+                raccoonEntity.setTamed(true, true);
             }
         }
-
         return raccoonEntity;
     }
 
@@ -437,7 +430,7 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
 
     @Override
     public int getAngerTime() {
-        return (Integer)this.dataTracker.get(ANGER_TIME);
+        return this.dataTracker.get(ANGER_TIME);
     }
 
     @Override
@@ -499,11 +492,6 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
             return SoundEvents.BLOCK_AMETHYST_BLOCK_BREAK;
         }
         return RaccoonsRabiesSounds.ENTITY_RACCOON_DEATH;
-    }
-
-    @Override
-    public EntityView method_48926() {
-        return this.getWorld();
     }
 
     @Override

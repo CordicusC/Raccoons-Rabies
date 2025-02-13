@@ -1,32 +1,50 @@
 package net.cordicus.raccoons.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.cordicus.raccoons.RaccoonsRabies;
-import net.cordicus.raccoons.item.custom.RaccoonsRabiesArmorMaterials;
+import net.cordicus.raccoons.item.custom.RaccoonsRabiesArmorItem;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
-public class LivingEntityMixin {
-    @Inject(method="isAffectedBySplashPotions", at=@At("HEAD"), cancellable = true)
-    private void raccoonsRabies$rabiesCancelSplash(CallbackInfoReturnable<Boolean>cir) {
-        LivingEntity entity = (LivingEntity)(Object) this;
-        if (entity.hasStatusEffect(RaccoonsRabies.RABIES_EFFECT))
-            cir.setReturnValue(false);
+public abstract class LivingEntityMixin extends Entity {
+
+    @Shadow public abstract boolean hasStatusEffect(RegistryEntry<StatusEffect> effect);
+
+    public LivingEntityMixin(EntityType<?> type, World world) {
+        super(type, world);
     }
-    @Inject(method ="hurtByWater", at=@At("HEAD"), cancellable = true)
-    private void raccoonRabies$rabiesHurtByWater(CallbackInfoReturnable<Boolean>cir) {
-        LivingEntity entity = (LivingEntity)(Object) this;
-        if (entity.hasStatusEffect(RaccoonsRabies.RABIES_EFFECT))
-            cir.setReturnValue(true);
+
+    @ModifyReturnValue(method = "isAffectedBySplashPotions", at = @At("RETURN"))
+    private boolean raccoonsRabies$rabiesCancelsSplash(boolean original) {
+        if (this.hasStatusEffect(RaccoonsRabies.RABIES_EFFECT)) {
+            return false;
+        }
+        return original;
     }
-    @Inject(method = "canHaveStatusEffect", at = @At("HEAD"), cancellable = true)
-    private void raccoonRabies$canHaveStatusEffect(StatusEffectInstance effect, CallbackInfoReturnable<Boolean> cir) {
-        LivingEntity entity = (LivingEntity)(Object) this;
-        if (RaccoonsRabiesArmorMaterials.isWearingFullArmorSet(entity)&& effect.getEffectType().equals(RaccoonsRabies.RABIES_EFFECT))
-            cir.setReturnValue(false);
+
+    @ModifyReturnValue(method = "hurtByWater", at = @At("RETURN"))
+    private boolean raccoonRabies$rabiesHurtsInWater(boolean original) {
+        if (this.hasStatusEffect(RaccoonsRabies.RABIES_EFFECT)) {
+            return true;
+        }
+        return original;
+    }
+
+    @ModifyReturnValue(method = "canHaveStatusEffect", at = @At("RETURN"))
+    private boolean raccoonRabies$banditArmorRabiesImmunity(boolean original, StatusEffectInstance effect) {
+        LivingEntity entity = (LivingEntity) (Object) this;
+        if (RaccoonsRabiesArmorItem.isWearingFullArmorSet(entity) && effect.equals(RaccoonsRabies.RABIES_EFFECT)) {
+            return false;
+        }
+        return original;
     }
 }

@@ -24,10 +24,10 @@ public class ModModelProvider extends FabricModelProvider {
     @Override
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
         itemModelGenerator.register(RaccoonsRabiesItems.RACCOON_SPAWN_EGG,
-                new Model(Optional.of(new Identifier("item/template_spawn_egg")), Optional.empty()));
-        itemModelGenerator.registerArmor((ArmorItem) RaccoonsRabiesItems.BANDIT_HELMET);
-        itemModelGenerator.registerArmor((ArmorItem) RaccoonsRabiesItems.BANDIT_CHESTPLATE);
-        itemModelGenerator.registerArmor((ArmorItem) RaccoonsRabiesItems.BANDIT_LEGGINGS);
+                new Model(Optional.of(Identifier.of("item/template_spawn_egg")), Optional.empty()));
+        itemModelGenerator.registerArmor((ArmorItem) RaccoonsRabiesItems.BANDIT_HOOD);
+        itemModelGenerator.registerArmor((ArmorItem) RaccoonsRabiesItems.BANDIT_GAMBESON);
+        itemModelGenerator.registerArmor((ArmorItem) RaccoonsRabiesItems.BANDIT_GREAVES);
         itemModelGenerator.registerArmor((ArmorItem) RaccoonsRabiesItems.BANDIT_BOOTS);
     }
 }

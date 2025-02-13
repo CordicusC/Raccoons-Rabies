@@ -2,6 +2,8 @@ package net.cordicus.raccoons.mixin;
 
 import net.cordicus.raccoons.entity.custom.RaccoonEntity;
 import net.cordicus.raccoons.item.RaccoonsRabiesItems;
+import net.cordicus.raccoons.item.component.RaccoonHandheldDataComponent;
+import net.cordicus.raccoons.item.component.RaccoonsRabiesItemComponents;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -26,8 +28,11 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
     private void raccoonsRabies$renamesUpdateRaccoonType(PlayerEntity player, ItemStack stack, CallbackInfo ci) {
         if (!stack.isOf(RaccoonsRabiesItems.RACCOON)) return; // exits if stack is not a raccoon
 
-        if (RaccoonEntity.getNameToVariant().containsKey(stack.getName().getString().toLowerCase()) && stack.hasNbt()) {
-            stack.getOrCreateNbt().putInt("Type", RaccoonEntity.getNameToVariant().get(stack.getName().getString().toLowerCase()));
+        if (RaccoonEntity.getNameToVariant().containsKey(stack.getName().getString().toLowerCase()) && stack.contains(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA)) {
+            stack.set(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA,
+                    new RaccoonHandheldDataComponent(RaccoonEntity.getNameToVariant().get(stack.getName().getString().toLowerCase()),
+                            stack.get(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA).owner(),
+                            stack.get(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA).baby()));
         }
     }
 
@@ -36,8 +41,11 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
         ItemStack stack = this.output.getStack(getResultSlotIndex());
         if (!stack.isOf(RaccoonsRabiesItems.RACCOON)) return; // exits if stack is not a raccoon
 
-        if (RaccoonEntity.getNameToVariant().containsKey(stack.getName().getString().toLowerCase()) && stack.hasNbt()) {
-            stack.getOrCreateNbt().putInt("Type", RaccoonEntity.getNameToVariant().get(stack.getName().getString().toLowerCase()));
+        if (RaccoonEntity.getNameToVariant().containsKey(stack.getName().getString().toLowerCase()) && stack.contains(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA)) {
+            stack.set(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA,
+                    new RaccoonHandheldDataComponent(RaccoonEntity.getNameToVariant().get(stack.getName().getString().toLowerCase()),
+                            stack.get(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA).owner(),
+                            stack.get(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA).baby()));
         }
     }
 
