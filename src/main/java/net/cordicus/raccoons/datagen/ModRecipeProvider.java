@@ -1,4 +1,4 @@
-package net.cordicus.raccoons.datagen;
+/*package net.cordicus.raccoons.datagen;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
@@ -16,4 +16,4 @@ public class ModRecipeProvider extends FabricRecipeProvider {
     public void generate(RecipeExporter recipeExporter) {
 
     }
-}
+}*/

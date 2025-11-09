@@ -5,6 +5,8 @@ import net.cordicus.raccoons.entity.custom.RaccoonEntity;
 import net.minecraft.util.Identifier;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoRenderer;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
+import software.bernie.geckolib.renderer.base.GeoRenderer;
 
 public class RaccoonModel extends GeoModel<RaccoonEntity> {
 	//AWAKE
@@ -29,7 +31,7 @@ public class RaccoonModel extends GeoModel<RaccoonEntity> {
 
 
 	@Override
-	public Identifier getModelResource(RaccoonEntity animatable, GeoRenderer<RaccoonEntity> renderer) {
+	public Identifier getModelResource(RaccoonEntity animatable, GeoRenderState<RaccoonEntity> renderer) {
 		return RaccoonsRabies.id("geo/raccoon.geo.json");
 	}
 

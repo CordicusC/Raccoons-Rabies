@@ -4,6 +4,7 @@ import net.cordicus.raccoons.item.RaccoonsRabiesItems;
 import net.cordicus.raccoons.item.component.RaccoonsRabiesItemComponents;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -11,7 +12,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.StackReference;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.equipment.ArmorMaterial;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.slot.Slot;
@@ -24,7 +27,7 @@ import java.util.List;
 
 public class RaccoonsRabiesArmorItem extends ArmorItem {
 
-    public RaccoonsRabiesArmorItem(RegistryEntry<ArmorMaterial> material, Type type, Settings settings) {
+    public RaccoonsRabiesArmorItem(RegistryEntry<ArmorMaterial> material, Type type, AbstractBlock.Settings settings) {
         super(material, type, settings);
     }
 
@@ -37,7 +40,7 @@ public class RaccoonsRabiesArmorItem extends ArmorItem {
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
+    public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type) {
         super.appendTooltip(stack, context, tooltip, type);
         if (MinecraftClient.getInstance().cameraEntity instanceof PlayerEntity player && RaccoonsRabiesArmorItem.isWearingFullArmorSet(player)) {
             tooltip.add(Text.translatable("item.raccoons-rabies.bandit_armor.tooltip").formatted(Formatting.GRAY));
