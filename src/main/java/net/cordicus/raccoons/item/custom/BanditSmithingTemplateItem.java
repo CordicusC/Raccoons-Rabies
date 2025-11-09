@@ -44,18 +44,18 @@ public class BanditSmithingTemplateItem extends SmithingTemplateItem {
             Text additionsSlotDescriptionText,
             List<Identifier> emptyBaseSlotTextures,
             List<Identifier> emptyAdditionsSlotTextures) {
-        super(appliesToText, ingredientsText, titleText, baseSlotDescriptionText, additionsSlotDescriptionText, emptyBaseSlotTextures, emptyAdditionsSlotTextures);
+        super(appliesToText, ingredientsText, titleText, baseSlotDescriptionText, (List<Identifier>) additionsSlotDescriptionText, emptyBaseSlotTextures, (Settings) emptyAdditionsSlotTextures);
     }
 
-    public static SmithingTemplateItem createBanditUpgrade() {
+    public static Settings createBanditUpgrade() {
         return new SmithingTemplateItem(
                 BANDIT_UPGRADE_APPLIES_TO_TEXT,
                 BANDIT_UPGRADE_INGREDIENTS_TEXT,
                 BANDIT_UPGRADE_TEXT,
                 BANDIT_UPGRADE_BASE_SLOT_DESCRIPTION_TEXT,
-                BANDIT_UPGRADE_ADDITIONS_SLOT_DESCRIPTION_TEXT,
+                (List<Identifier>) BANDIT_UPGRADE_ADDITIONS_SLOT_DESCRIPTION_TEXT,
                 getBanditUpgradeEmptyBaseSlotTextures(),
-                getBanditUpgradeEmptyAdditionsSlotTextures()
+                (Settings) getBanditUpgradeEmptyAdditionsSlotTextures()
         );
     }
 

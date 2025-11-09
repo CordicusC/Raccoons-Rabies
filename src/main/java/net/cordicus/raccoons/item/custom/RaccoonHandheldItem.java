@@ -1,7 +1,5 @@
 package net.cordicus.raccoons.item.custom;
 
-import dev.emi.trinkets.api.TrinketComponent;
-import dev.emi.trinkets.api.TrinketsApi;
 import net.cordicus.raccoons.entity.RaccoonsRabiesEntities;
 import net.cordicus.raccoons.entity.custom.RaccoonEntity;
 import net.cordicus.raccoons.item.RaccoonsRabiesItems;
@@ -67,7 +65,7 @@ public class RaccoonHandheldItem extends Item {
                 RaccoonHandheldDataComponent component = context.getStack().get(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA);
                 if (!component.owner().isEmpty()) {
                     entity.setTamed(true, true);
-                    entity.setOwnerUuid(UUID.fromString(component.owner()));
+                    entity.setTamedBy(context.getPlayer());
                     entity.setSitting(context.getPlayer() != null && context.getPlayer().isSneaking()); // if player is sneaking when placing sets the raccoon to be sitting
                     entity.setInSittingPose(context.getPlayer() != null && context.getPlayer().isSneaking());
                 }
@@ -93,7 +91,6 @@ public class RaccoonHandheldItem extends Item {
         return ActionResult.SUCCESS;
     }
 
-    @Override
     public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
         int raccoonType = stack.get(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA).type();
 
@@ -124,17 +121,17 @@ public class RaccoonHandheldItem extends Item {
         super.appendTooltip(stack, context, tooltip, type);
     }
 
-    public static boolean hasRaccoonEquipped(LivingEntity livingEntity) {
-        Optional<TrinketComponent> trinketComponent = TrinketsApi.getTrinketComponent(livingEntity);
-        return trinketComponent.map(component -> component.isEquipped(RaccoonsRabiesItems.RACCOON)).orElse(false);
-    }
-
-    public static ItemStack getRaccoonOnHead(LivingEntity livingEntity) {
-        Optional<TrinketComponent> trinketComponent = TrinketsApi.getTrinketComponent(livingEntity);
-        if (trinketComponent.isPresent()) {
-            return trinketComponent.get().getEquipped(RaccoonsRabiesItems.RACCOON).get(0).getRight();
-        }
-        return ItemStack.EMPTY;
-    }
+//    public static boolean hasRaccoonEquipped(LivingEntity livingEntity) {
+//        Optional<TrinketComponent> trinketComponent = TrinketsApi.getTrinketComponent(livingEntity);
+//        return trinketComponent.map(component -> component.isEquipped(RaccoonsRabiesItems.RACCOON)).orElse(false);
+//    }
+//
+//    public static ItemStack getRaccoonOnHead(LivingEntity livingEntity) {
+//        Optional<TrinketComponent> trinketComponent = TrinketsApi.getTrinketComponent(livingEntity);
+//        if (trinketComponent.isPresent()) {
+//            return trinketComponent.get().getEquipped(RaccoonsRabiesItems.RACCOON).get(0).getRight();
+//        }
+//        return ItemStack.EMPTY;
+//    }
 
 }
