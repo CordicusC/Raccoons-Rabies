@@ -2,7 +2,7 @@ package net.cordicus.raccoons;
 
 import net.cordicus.raccoons.command.SpawnRaccoonCommand;
 import net.cordicus.raccoons.common.effect.RabiesEffect;
-import net.cordicus.raccoons.entity.RaccoonsRabiesEntities;
+import net.cordicus.raccoons.entity.RREntityTypes;
 import net.cordicus.raccoons.entity.custom.RaccoonEntity;
 import net.cordicus.raccoons.item.RaccoonsRabiesItems;
 import net.cordicus.raccoons.item.component.RaccoonsRabiesItemComponents;
@@ -37,15 +37,15 @@ public class RaccoonsRabies implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		FabricDefaultAttributeRegistry.register(RaccoonsRabiesEntities.RACCOON, RaccoonEntity.createRaccoonAttributes());
-		RaccoonsRabiesItems.registerModItems();
+		FabricDefaultAttributeRegistry.register(RREntityTypes.RACCOON, RaccoonEntity.createRaccoonAttributes());
+		RaccoonsRabiesItems.initItems();
 		RaccoonsRabiesItemComponents.registerItemComponents();
-		RaccoonsRabiesEntities.registerModEntities();
+		RREntityTypes.initMobEntities();
 		RaccoonsRabiesSounds.registerSounds();
 		RaccoonsRabiesLootTableModifiers.modifyLootTables();
 		BiomeModifications.addSpawn(BiomeSelectors.includeByKey(BiomeKeys.FOREST),
 				SpawnGroup.CREATURE,
-				RaccoonsRabiesEntities.RACCOON,
+				RREntityTypes.RACCOON,
 				8, 1, 4);
 
 

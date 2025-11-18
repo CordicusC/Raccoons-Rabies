@@ -2,7 +2,11 @@ package net.cordicus.raccoons.item.custom;
 
 import dev.emi.trinkets.api.TrinketComponent;
 import dev.emi.trinkets.api.TrinketsApi;
+<<<<<<< Updated upstream
 import net.cordicus.raccoons.entity.RaccoonsRabiesEntities;
+=======
+import net.cordicus.raccoons.entity.RREntityTypes;
+>>>>>>> Stashed changes
 import net.cordicus.raccoons.entity.custom.RaccoonEntity;
 import net.cordicus.raccoons.item.RaccoonsRabiesItems;
 import net.cordicus.raccoons.item.component.RaccoonHandheldDataComponent;
@@ -20,7 +24,7 @@ import net.minecraft.util.math.Vec3d;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+import java.util.function.Consumer;
 
 public class RaccoonHandheldItem extends Item {
 
@@ -53,7 +57,7 @@ public class RaccoonHandheldItem extends Item {
 
         Vec3d spawnLocation = new Vec3d(hitResult.x, hitResult.y, hitResult.z);
         if (!context.getWorld().isClient()) {
-            RaccoonEntity entity = new RaccoonEntity(RaccoonsRabiesEntities.RACCOON, context.getWorld());
+            RaccoonEntity entity = new RaccoonEntity(RREntityTypes.RACCOON, context.getWorld());
             entity.updatePosition(spawnLocation.x, spawnLocation.y, spawnLocation.z);
             if (context.getStack().get(DataComponentTypes.CUSTOM_DATA) != null) {
                 NbtCompound nbt = context.getStack().get(DataComponentTypes.CUSTOM_DATA).copyNbt();
@@ -67,7 +71,11 @@ public class RaccoonHandheldItem extends Item {
                 RaccoonHandheldDataComponent component = context.getStack().get(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA);
                 if (!component.owner().isEmpty()) {
                     entity.setTamed(true, true);
+<<<<<<< Updated upstream
                     entity.setOwnerUuid(UUID.fromString(component.owner()));
+=======
+                    entity.setOwner(context.getPlayer());
+>>>>>>> Stashed changes
                     entity.setSitting(context.getPlayer() != null && context.getPlayer().isSneaking()); // if player is sneaking when placing sets the raccoon to be sitting
                     entity.setInSittingPose(context.getPlayer() != null && context.getPlayer().isSneaking());
                 }
@@ -93,8 +101,12 @@ public class RaccoonHandheldItem extends Item {
         return ActionResult.SUCCESS;
     }
 
+<<<<<<< Updated upstream
     @Override
     public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
+=======
+    public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type) {
+>>>>>>> Stashed changes
         int raccoonType = stack.get(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA).type();
 
         if(stack.get(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA).baby()) {

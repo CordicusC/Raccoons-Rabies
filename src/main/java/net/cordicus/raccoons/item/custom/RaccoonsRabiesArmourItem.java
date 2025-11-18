@@ -10,10 +10,16 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.StackReference;
 import net.minecraft.item.ArmorItem;
+<<<<<<< Updated upstream:src/main/java/net/cordicus/raccoons/item/custom/RaccoonsRabiesArmorItem.java
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.ItemStack;
+=======
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.equipment.ArmorMaterial;
+import net.minecraft.item.equipment.EquipmentType;
+>>>>>>> Stashed changes:src/main/java/net/cordicus/raccoons/item/custom/RaccoonsRabiesArmourItem.java
 import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
@@ -22,10 +28,15 @@ import net.minecraft.util.Formatting;
 
 import java.util.List;
 
-public class RaccoonsRabiesArmorItem extends ArmorItem {
+public class RaccoonsRabiesArmourItem extends Item {
 
+<<<<<<< Updated upstream:src/main/java/net/cordicus/raccoons/item/custom/RaccoonsRabiesArmorItem.java
     public RaccoonsRabiesArmorItem(RegistryEntry<ArmorMaterial> material, Type type, Settings settings) {
         super(material, type, settings);
+=======
+    public RaccoonsRabiesArmourItem(ArmorMaterial material, EquipmentType type, Item.Settings settings) {
+        super(material.applySettings(settings, type));
+>>>>>>> Stashed changes:src/main/java/net/cordicus/raccoons/item/custom/RaccoonsRabiesArmourItem.java
     }
 
     public static boolean isWearingFullArmorSet(LivingEntity entity) {
@@ -39,7 +50,7 @@ public class RaccoonsRabiesArmorItem extends ArmorItem {
     @Override
     public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
         super.appendTooltip(stack, context, tooltip, type);
-        if (MinecraftClient.getInstance().cameraEntity instanceof PlayerEntity player && RaccoonsRabiesArmorItem.isWearingFullArmorSet(player)) {
+        if (MinecraftClient.getInstance().cameraEntity instanceof PlayerEntity player && RaccoonsRabiesArmourItem.isWearingFullArmorSet(player)) {
             tooltip.add(Text.translatable("item.raccoons-rabies.bandit_armor.tooltip").formatted(Formatting.GRAY));
         }
         if (stack.isOf(RaccoonsRabiesItems.BANDIT_HOOD)) {

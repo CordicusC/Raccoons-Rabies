@@ -38,12 +38,16 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+<<<<<<< Updated upstream
 
 	modImplementation("software.bernie.geckolib:geckolib-fabric-${minecraft_version}:${geckolib_version}")
 
 	modImplementation("dev.emi:trinkets:${project.trinkets_version}")
+=======
+	modImplementation "software.bernie.geckolib:geckolib-fabric-${minecraft_version}:${geckolib_version}"
+	modImplementation "maven.modrinth:trinkets-canary:${project.trinkets_version}"
+>>>>>>> Stashed changes
 }
-
 
 processResources {
 	inputs.property "version", project.version

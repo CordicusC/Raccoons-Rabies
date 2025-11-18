@@ -2,10 +2,9 @@ package net.cordicus.raccoons.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import net.cordicus.raccoons.entity.RaccoonsRabiesEntities;
+import net.cordicus.raccoons.entity.RREntityTypes;
 import net.cordicus.raccoons.entity.custom.RaccoonEntity;
 import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -48,7 +47,7 @@ public class SpawnRaccoonCommand {
                 raccoonType = 0;
                 break;
         }
-        RaccoonEntity raccoon = new RaccoonEntity(RaccoonsRabiesEntities.RACCOON, world);
+        RaccoonEntity raccoon = new RaccoonEntity(RREntityTypes.RACCOON, world);
         raccoon.setPosition(pos.getX(), pos.getY(), pos.getZ());
         raccoon.setRaccoonType(raccoonType);
         world.spawnEntity(raccoon);

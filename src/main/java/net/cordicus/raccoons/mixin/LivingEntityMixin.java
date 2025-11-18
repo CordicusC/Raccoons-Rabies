@@ -2,7 +2,7 @@ package net.cordicus.raccoons.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.cordicus.raccoons.RaccoonsRabies;
-import net.cordicus.raccoons.item.custom.RaccoonsRabiesArmorItem;
+import net.cordicus.raccoons.item.custom.RaccoonsRabiesArmourItem;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -42,7 +42,7 @@ public abstract class LivingEntityMixin extends Entity {
     @ModifyReturnValue(method = "canHaveStatusEffect", at = @At("RETURN"))
     private boolean raccoonRabies$banditArmorRabiesImmunity(boolean original, StatusEffectInstance effect) {
         LivingEntity entity = (LivingEntity) (Object) this;
-        if (RaccoonsRabiesArmorItem.isWearingFullArmorSet(entity) && effect.equals(RaccoonsRabies.RABIES_EFFECT)) {
+        if (RaccoonsRabiesArmourItem.isWearingFullArmorSet(entity) && effect.equals(RaccoonsRabies.RABIES_EFFECT)) {
             return false;
         }
         return original;

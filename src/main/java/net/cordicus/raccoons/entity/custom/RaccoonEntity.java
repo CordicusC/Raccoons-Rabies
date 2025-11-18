@@ -1,7 +1,7 @@
 package net.cordicus.raccoons.entity.custom;
 
 import net.cordicus.raccoons.RaccoonsRabies;
-import net.cordicus.raccoons.entity.RaccoonsRabiesEntities;
+import net.cordicus.raccoons.entity.RREntityTypes;
 import net.cordicus.raccoons.item.RaccoonsRabiesItems;
 import net.cordicus.raccoons.item.component.RaccoonHandheldDataComponent;
 import net.cordicus.raccoons.item.component.RaccoonsRabiesItemComponents;
@@ -92,7 +92,7 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
         super.setCustomName(name);
         if (name != null) {
             String nameString = name.getString();
-            if (NAME_TO_VARIANT.containsKey((nameString.toLowerCase()))) {  // named variants are no longer case sensitive
+            if (NAME_TO_VARIANT.containsKey((nameString.toLowerCase()))) {  // named variants are no longer case-sensitive
                 this.setRaccoonType(NAME_TO_VARIANT.getOrDefault(nameString.toLowerCase(), 0));
             }
         }
@@ -168,7 +168,7 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
     @Override
     protected void updateLimbs(float posDelta) {
         float f = this.getPose() == EntityPose.STANDING ? Math.min(posDelta * 6.0F, 1.0F): 0.0f;
-        this.limbAnimator.updateLimbs(f, 0.2F);
+        this.limbAnimator.updateLimbs(f, 0.2F, 1.f);
     }
 
     @Override
@@ -232,19 +232,19 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
 
     public static DefaultAttributeContainer.Builder createRaccoonAttributes() {
         return MobEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 4.0f)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3f)
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 8.0f)
-                .add(EntityAttributes.GENERIC_ARMOR, 0.5f);
+                .add(EntityAttributes.ATTACK_DAMAGE, 4.0f)
+                .add(EntityAttributes.MOVEMENT_SPEED, 0.3f)
+                .add(EntityAttributes.MAX_HEALTH, 8.0f)
+                .add(EntityAttributes.ARMOR, 0.5f);
     }
 
     @Override
     protected void updateAttributesForTamed() {
         if (this.isTamed()) {
-            this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(12.0f);
+            this.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(12.0f);
             this.setHealth(12.0f);
         } else {
-            this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(4.0f);
+            this.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(4.0f);
         }
     }
 
@@ -253,9 +253,8 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
         return stack.contains(DataComponentTypes.FOOD);
     }
 
-    @Override
-    public boolean tryAttack(Entity target) {
-        boolean bl = super.tryAttack(target);
+    public boolean tryAttack(ServerWorld world, Entity target) {
+        boolean bl = super.tryAttack(world, target);
         if (bl) {
             int check = this.getRandom().nextInt(100 + 1);
             if (target instanceof LivingEntity livingEntity && check <= 50) { // 50% chance to give rabies, rabies duration is 40 ticks + (the check * 2) (min is 2 seconds, max is 140 ticks or 7 seconds)
@@ -266,7 +265,7 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
     }
 
 
-    public boolean isUniversallyAngry(World world) {
+    public boolean isUniversallyAngry(ServerWorld world) {
         return world.getGameRules().getBoolean(GameRules.UNIVERSAL_ANGER) && this.hasAngerTime() && this.getAngryAt() == null;
     }
 
@@ -411,7 +410,7 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
     @Nullable
     public RaccoonEntity createChild(ServerWorld serverWorld, PassiveEntity passiveEntity) {
         int childType = getWeightedRaccoonType(this.getRaccoonType(), ((RaccoonEntity) passiveEntity).getRaccoonType());
-        RaccoonEntity raccoonEntity = RaccoonsRabiesEntities.RACCOON.create(serverWorld);
+        RaccoonEntity raccoonEntity = (RaccoonEntity) RREntityTypes.RACCOON.create(serverWorld, SpawnReason.BREEDING);
         if (raccoonEntity != null) {
             raccoonEntity.setRaccoonType(childType);
             UUID uUID = this.getOwnerUuid();
@@ -472,19 +471,6 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
         return RaccoonsRabiesSounds.ENTITY_RACCOON_HURT;
     }
 
-    @Override
-    protected void dropLoot(DamageSource damageSource, boolean causedByPlayer) {
-        super.dropLoot(damageSource, causedByPlayer);
-
-        if (this.getRaccoonType() == 1) {
-            this.dropStack(new ItemStack(Items.AMETHYST_SHARD, this.random.nextInt(3)));
-        } else if (this.getRaccoonType() == 2) {
-            this.dropStack(new ItemStack(RaccoonsRabiesItems.ALBINO_RACCOON_FUR, this.random.nextInt(3)));
-        } else {
-            this.dropStack(new ItemStack(RaccoonsRabiesItems.RACCOON_FUR, this.random.nextInt(3)));
-        }
-    }
-
     @Nullable
     @Override
     protected SoundEvent getDeathSound() {
@@ -494,13 +480,12 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
         return RaccoonsRabiesSounds.ENTITY_RACCOON_DEATH;
     }
 
-    @Override
-    public boolean damage(DamageSource source, float amount) { // owner cannot hit their own raccoons
+    public boolean damage(ServerWorld world, DamageSource source, float amount) { // owner cannot hit their own raccoons
         if (source.getAttacker() instanceof PlayerEntity player && this.isTamed()) {
             if (this.getOwner() != null && player.equals(this.getOwner()) && !player.getMainHandStack().isIn(RaccoonsRabies.HITTABLE)) {
                 return false;
             }
         }
-        return super.damage(source, amount);
+        return super.damage(world, source, amount);
     }
 }

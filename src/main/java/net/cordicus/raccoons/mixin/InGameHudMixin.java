@@ -7,6 +7,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,7 +33,7 @@ public abstract class InGameHudMixin {
     private void raccoonsRabies$rabiesHearts(DrawContext context, InGameHud.HeartType type, int x, int y, boolean hardcore, boolean blinking, boolean half, CallbackInfo ci) {
         if (type != InGameHud.HeartType.ABSORBING && type != InGameHud.HeartType.CONTAINER && MinecraftClient.getInstance().cameraEntity instanceof PlayerEntity player && player.hasStatusEffect(RaccoonsRabies.RABIES_EFFECT)) {
             RenderSystem.enableBlend();
-            context.drawGuiTexture(getTexture(hardcore, half, blinking), x, y, 9, 9);
+            context.drawGuiTexture(RenderLayer::getGuiTextured, getTexture(hardcore, half, blinking), x, y, 9, 9);
             RenderSystem.disableBlend();
             ci.cancel();
         }

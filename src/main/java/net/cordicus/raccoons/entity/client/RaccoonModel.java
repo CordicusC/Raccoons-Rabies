@@ -3,6 +3,7 @@ package net.cordicus.raccoons.entity.client;
 import net.cordicus.raccoons.RaccoonsRabies;
 import net.cordicus.raccoons.entity.custom.RaccoonEntity;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoRenderer;
 
@@ -29,7 +30,12 @@ public class RaccoonModel extends GeoModel<RaccoonEntity> {
 
 
 	@Override
+<<<<<<< Updated upstream
 	public Identifier getModelResource(RaccoonEntity animatable, GeoRenderer<RaccoonEntity> renderer) {
+=======
+	public Identifier getModelResource(RaccoonEntity raccoon, @Nullable GeoRenderer<RaccoonEntity> geoRenderer)
+	{
+>>>>>>> Stashed changes
 		return RaccoonsRabies.id("geo/raccoon.geo.json");
 	}
 
@@ -37,20 +43,6 @@ public class RaccoonModel extends GeoModel<RaccoonEntity> {
 	public Identifier getTextureResource(RaccoonEntity raccoon, GeoRenderer<RaccoonEntity> renderer) {
 		return getRaccoonTexture(raccoon);
 	}
-
-	// this is marked for deprecation but the horse is making me do it
-	@SuppressWarnings("removal")
-	@Override
-	public Identifier getModelResource(RaccoonEntity raccoon) {
-		return RaccoonsRabies.id("geo/raccoon.geo.json");
-	}
-
-	@SuppressWarnings("removal")
-    @Override
-	public Identifier getTextureResource(RaccoonEntity raccoon) {
-		return getRaccoonTexture(raccoon);
-	}
-	// this one too. why must I implement you. and yet you yell at me
 
 	@Override
 	public Identifier getAnimationResource(RaccoonEntity animatable) {

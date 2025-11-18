@@ -1,6 +1,6 @@
 package net.cordicus.raccoons.mixin;
 
-import net.cordicus.raccoons.entity.RaccoonsRabiesEntities;
+import net.cordicus.raccoons.entity.RREntityTypes;
 import net.cordicus.raccoons.entity.custom.RaccoonEntity;
 import net.cordicus.raccoons.item.RaccoonsRabiesItems;
 import net.cordicus.raccoons.item.component.RaccoonHandheldDataComponent;
@@ -9,8 +9,10 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Formatting;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -25,7 +27,7 @@ import java.util.UUID;
 @Mixin(ItemEntity.class)
 public abstract class ItemEntityMixin extends Entity {
 
-    public ItemEntityMixin(EntityType<?> type, World world) {
+    public ItemEntityMixin(EntityType<?> type, ServerWorld world) {
         super(type, world);
     }
 
@@ -33,11 +35,11 @@ public abstract class ItemEntityMixin extends Entity {
     public abstract ItemStack getStack();
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
-    private void raccoonsRabies$spawnRaccoonOnDrop(CallbackInfo ci) {
+    private void raccoonsRabies$spawnRaccoonOnDrop(ServerWorld world, CallbackInfo ci) {
         ItemStack stack = this.getStack();
         if (stack != null && stack.isOf(RaccoonsRabiesItems.RACCOON)) {
             if (!this.getWorld().isClient()) {
-                RaccoonEntity raccoon = RaccoonsRabiesEntities.RACCOON.create(this.getWorld());
+                RaccoonEntity raccoon = RREntityTypes.RACCOON.create(world, SpawnReason.CONVERSION);
                 if (raccoon != null) {
                     if (stack.get(DataComponentTypes.CUSTOM_DATA) != null) {
                         NbtCompound nbt = stack.get(DataComponentTypes.CUSTOM_DATA).copyNbt();
