@@ -30,12 +30,8 @@ public class RaccoonModel extends GeoModel<RaccoonEntity> {
 
 
 	@Override
-<<<<<<< Updated upstream
-	public Identifier getModelResource(RaccoonEntity animatable, GeoRenderer<RaccoonEntity> renderer) {
-=======
 	public Identifier getModelResource(RaccoonEntity raccoon, @Nullable GeoRenderer<RaccoonEntity> geoRenderer)
 	{
->>>>>>> Stashed changes
 		return RaccoonsRabies.id("geo/raccoon.geo.json");
 	}
 

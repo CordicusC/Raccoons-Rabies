@@ -33,29 +33,6 @@ public class BanditSmithingTemplateItem extends SmithingTemplateItem {
     private static final Identifier EMPTY_SLOT_PICKAXE_TEXTURE = Identifier.ofVanilla("item/empty_slot_pickaxe");
     private static final Identifier EMPTY_SLOT_INGOT_TEXTURE = Identifier.ofVanilla("item/empty_slot_ingot");
 
-<<<<<<< Updated upstream
-    public BanditSmithingTemplateItem(
-            Text appliesToText,
-            Text ingredientsText,
-            Text titleText,
-            Text baseSlotDescriptionText,
-            Text additionsSlotDescriptionText,
-            List<Identifier> emptyBaseSlotTextures,
-            List<Identifier> emptyAdditionsSlotTextures) {
-        super(appliesToText, ingredientsText, titleText, baseSlotDescriptionText, additionsSlotDescriptionText, emptyBaseSlotTextures, emptyAdditionsSlotTextures);
-    }
-
-    public static SmithingTemplateItem createBanditUpgrade() {
-        return new SmithingTemplateItem(
-                BANDIT_UPGRADE_APPLIES_TO_TEXT,
-                BANDIT_UPGRADE_INGREDIENTS_TEXT,
-                BANDIT_UPGRADE_TEXT,
-                BANDIT_UPGRADE_BASE_SLOT_DESCRIPTION_TEXT,
-                BANDIT_UPGRADE_ADDITIONS_SLOT_DESCRIPTION_TEXT,
-                getBanditUpgradeEmptyBaseSlotTextures(),
-                getBanditUpgradeEmptyAdditionsSlotTextures()
-        );
-=======
     public BanditSmithingTemplateItem(Text appliesToText, Text ingredientsText, Text baseSlotDescriptionText, Text additionsSlotDescriptionText, List<Identifier> emptyBaseSlotTextures, List<Identifier> emptyAdditionsSlotTextures, Settings settings) {
         super(appliesToText, ingredientsText, baseSlotDescriptionText, additionsSlotDescriptionText, emptyBaseSlotTextures, emptyAdditionsSlotTextures, settings);
     }
@@ -68,7 +45,6 @@ public class BanditSmithingTemplateItem extends SmithingTemplateItem {
                 getBanditUpgradeEmptyBaseSlotTextures(),
                 getBanditUpgradeEmptyAdditionsSlotTextures(),
                 settings);
->>>>>>> Stashed changes
     }
 
     private static List<Identifier> getBanditUpgradeEmptyBaseSlotTextures() {
