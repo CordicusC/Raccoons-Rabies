@@ -6,10 +6,10 @@
 	"description": "Adding Raccoons and a way to weaponise them!",
 	"authors": [
 		"Cordicus (Owner)",
-		"TheTrueYaK (Developer)",
+		"TheTrueYak (Developer)",
 		"n1tr0n__ (Developer)"
 	],
-	"license": "CC0-1.0",
+	"license": "ARR",
 	"icon": "assets/raccoons-rabies/icon.png",
 	"environment": "*",
 	"entrypoints": {

@@ -37,6 +37,7 @@ repositories {
 			includeGroup "maven.modrinth"
 		}
 	}
+	maven { url "https://maven.ladysnake.org/releases" }
 }
 
 fabricApi {
@@ -49,7 +50,10 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
 	modImplementation "software.bernie.geckolib:geckolib-fabric-${minecraft_version}:${geckolib_version}"
+	modImplementation "org.ladysnake.cardinal-components-api:cardinal-components-base:${cca_version}"
+	modImplementation "org.ladysnake.cardinal-components-api:cardinal-components-entity:${cca_version}"
 	modImplementation "maven.modrinth:trinkets-canary:${project.trinkets_version}"
 }
 

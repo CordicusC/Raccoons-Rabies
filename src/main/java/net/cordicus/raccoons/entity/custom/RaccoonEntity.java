@@ -231,7 +231,7 @@ public class RaccoonEntity extends TameableEntity implements Angerable, GeoEntit
     }
 
     public static DefaultAttributeContainer.Builder createRaccoonAttributes() {
-        return MobEntity.createMobAttributes()
+        return AnimalEntity.createAnimalAttributes()
                 .add(EntityAttributes.ATTACK_DAMAGE, 4.0f)
                 .add(EntityAttributes.MOVEMENT_SPEED, 0.3f)
                 .add(EntityAttributes.MAX_HEALTH, 8.0f)

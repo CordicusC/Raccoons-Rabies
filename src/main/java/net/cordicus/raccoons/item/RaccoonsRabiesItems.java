@@ -28,7 +28,7 @@ public class RaccoonsRabiesItems {
     public static Item ALBINO_RACCOON_FUR = register("albino_raccoon_fur", Item::new, new Item.Settings());
 
     // Raccoon
-    public static Item RACCOON = register("raccoon", settings -> new RaccoonHandheldItem(new Item.Settings().maxCount(1).component(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA, new RaccoonHandheldDataComponent(0, "", false))));
+    public static Item RACCOON = register("raccoon", RaccoonHandheldItem::new, new Item.Settings().maxCount(1).component(RaccoonsRabiesItemComponents.RACCOON_ENTITY_DATA, new RaccoonHandheldDataComponent(0, "", false)));
 
     // Bandit Armour Set
     public static final Item BANDIT_HOOD = register("bandit_hood", settings -> new ArmorItem(RaccoonsRabiesArmorMaterials.BANDIT_ARMOUR_MATERIAL, EquipmentType.HELMET, settings),
@@ -42,7 +42,7 @@ public class RaccoonsRabiesItems {
     public static final Item BANDIT_UPGRADE = register("bandit_upgrade", BanditSmithingTemplateItem::createBanditUpgrade, (new Item.Settings()).rarity(Rarity.UNCOMMON));
 
     // Raccoon Spawn Egg
-    public static final Item RACCOON_SPAWN_EGG = register("raccoon_spawn_egg", (settings -> new SpawnEggItem(RREntityTypes.RACCOON, settings)));
+    public static final Item RACCOON_SPAWN_EGG = register("raccoon_spawn_egg", (settings -> new SpawnEggItem(RREntityTypes.RACCOON, settings)), new Item.Settings());
 
 
 
@@ -62,15 +62,11 @@ public class RaccoonsRabiesItems {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.SPAWN_EGGS).register(entries -> entries.addAfter(Items.FOX_SPAWN_EGG, RACCOON_SPAWN_EGG));
     }
 
-    public static Item register(String name, Function<Item.Settings, Item> itemFactory, Item.Settings settings)
-    {
-        RegistryKey<Item> itemKey = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(RaccoonsRabies.MOD_ID, name));
+    public static Item register(String name, Function<Item.Settings, Item> itemFactory, Item.Settings settings) {
+        RegistryKey<Item> itemKey = RegistryKey.of(RegistryKeys.ITEM, RaccoonsRabies.id(name));
         Item item = itemFactory.apply(settings.registryKey(itemKey));
         Registry.register(Registries.ITEM, itemKey, item);
         return item;
     }
-    public static Item register(String id, Function<Item.Settings, Item> factory)
-    {
-        return register((id), factory, new Item.Settings());
-    }
+    
 }

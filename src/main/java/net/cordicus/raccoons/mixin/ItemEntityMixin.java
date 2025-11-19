@@ -14,7 +14,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Formatting;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -35,11 +34,11 @@ public abstract class ItemEntityMixin extends Entity {
     public abstract ItemStack getStack();
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
-    private void raccoonsRabies$spawnRaccoonOnDrop(ServerWorld world, CallbackInfo ci) {
+    private void raccoonsRabies$spawnRaccoonOnDrop(CallbackInfo ci) {
         ItemStack stack = this.getStack();
         if (stack != null && stack.isOf(RaccoonsRabiesItems.RACCOON)) {
             if (!this.getWorld().isClient()) {
-                RaccoonEntity raccoon = RREntityTypes.RACCOON.create(world, SpawnReason.CONVERSION);
+                RaccoonEntity raccoon = RREntityTypes.RACCOON.create(this.getWorld(), SpawnReason.CONVERSION);
                 if (raccoon != null) {
                     if (stack.get(DataComponentTypes.CUSTOM_DATA) != null) {
                         NbtCompound nbt = stack.get(DataComponentTypes.CUSTOM_DATA).copyNbt();

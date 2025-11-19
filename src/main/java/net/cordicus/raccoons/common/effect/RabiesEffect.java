@@ -24,14 +24,7 @@ public class RabiesEffect extends StatusEffect {
     }
 
     @Override
-    public boolean canApplyUpdateEffect(int duration, int amplifier)
-    {
-        int i = 45 >> amplifier;
-        if (i > 0) {
-            return duration % i == 0;
-        }
-        else {
-            return true;
-        }
+    public boolean canApplyUpdateEffect(int duration, int amplifier) {
+        return false;
     }
 }

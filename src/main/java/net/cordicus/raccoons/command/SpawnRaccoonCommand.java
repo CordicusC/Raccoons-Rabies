@@ -34,19 +34,11 @@ public class SpawnRaccoonCommand {
     }
 
     private static void spawnRaccoon(World world, BlockPos pos, String type, PlayerEntity player) {
-        int raccoonType = 0;
-        switch (type.toLowerCase()) {
-            case "albino":
-                raccoonType = 2;
-                break;
-            case "amethyst":
-                raccoonType = 1;
-                break;
-            case "normal":
-            default:
-                raccoonType = 0;
-                break;
-        }
+        int raccoonType = switch (type.toLowerCase()) {
+            case "albino" -> 2;
+            case "amethyst" -> 1;
+            default -> 0;
+        };
         RaccoonEntity raccoon = new RaccoonEntity(RREntityTypes.RACCOON, world);
         raccoon.setPosition(pos.getX(), pos.getY(), pos.getZ());
         raccoon.setRaccoonType(raccoonType);
